@@ -5,11 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shajazada Bhai Video Player</title>
 <style>
-body { margin:0; font-family: Arial, sans-serif; background:#f7f7f7; display:flex; flex-direction:column; align-items:center; }
-header { width:100%; background:#ff0000; color:white; text-align:center; padding:12px 0; font-size:20px; font-weight:bold; position:fixed; top:0; left:0; z-index:1000; }
-.player-container { width:100%; max-width:600px; margin-top:60px; display:flex; flex-direction:column; }
-video { width:100%; height:auto; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); position:fixed; top:60px; left:0; right:0; max-height:45vh; z-index:999; }
-.playlist { display:flex; flex-direction:column; gap:8px; margin-top:calc(45vh + 70px); width:100%; max-width:600px; overflow-y:auto; max-height:calc(100vh - 45vh - 70px); padding:0 10px; }
+body { margin:0; font-family: Arial, sans-serif; background:#f7f7f7; display:flex; flex-direction:column; height:100vh; }
+header { background:#ff0000; color:white; padding:12px 20px; text-align:center; font-size:22px; font-weight:bold; position:sticky; top:0; z-index:1000; }
+.player-container { display:flex; flex-direction:column; max-width:600px; margin:0 auto; flex:1; overflow:hidden; }
+video { width:100%; max-height:40vh; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
+.video-info { padding:10px; background:white; border-radius:0 0 12px 12px; }
+.video-info h3 { margin:0; font-size:18px; color:#333; }
+.video-info p { margin:5px 0 0 0; font-size:13px; color:#666; }
+.playlist { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px; padding:10px; }
 .playlist-card { display:flex; background:white; border-radius:8px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.1); cursor:pointer; }
 .playlist-card img { width:100px; height:60px; object-fit:cover; }
 .playlist-info { padding:5px; display:flex; flex-direction:column; justify-content:center; }
@@ -25,7 +28,12 @@ video { width:100%; height:auto; border-radius:12px; box-shadow:0 4px 8px rgba(0
     <source src="" type="video/mp4">
     Your browser does not support HTML5 video.
 </video>
+<div class="video-info">
+    <h3 id="video-title"></h3>
+    <p id="video-desc"></p>
+</div>
 <div class="playlist" id="playlist"></div>
+</div>
 
 <script>
 const videoData = [{"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/99.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/99.jpg", "title": "99", "description": ""}, {"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2.jpg", "title": "Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2", "description": ""}, {"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram.jpg", "title": "Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram", "description": ""}];
@@ -33,6 +41,9 @@ const videoData = [{"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/
 function loadVideo(url,title,desc){
     const player = document.getElementById('video-player');
     player.src = url;
+    document.getElementById('video-title').textContent = title;
+    document.getElementById('video-desc').textContent = desc;
+
     document.querySelectorAll('.playlist-card').forEach(c => c.classList.remove('active'));
     const activeCard = Array.from(document.querySelectorAll('.playlist-card')).find(c => c.dataset.url === url);
     if(activeCard) activeCard.classList.add('active');
@@ -55,6 +66,5 @@ videoData.forEach(v=>{
     playlistContainer.appendChild(card);
 });
 </script>
-</div>
 </body>
 </html>
