@@ -1,28 +1,64 @@
 <!DOCTYPE html>
-<html>
-<head><title>JalsaZee Videos</title></head>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JalsaZee Player</title>
+<style>
+body { margin:0; font-family: Arial, sans-serif; background:#f7f7f7; }
+header { background:#ff0000; color:white; padding:10px 20px; text-align:center; font-size:24px; font-weight:bold; }
+.container { display:flex; flex-wrap:wrap; max-width:1200px; margin:20px auto; gap:20px; }
+.player { flex:2; min-width:300px; }
+.playlist { flex:1; min-width:200px; max-height:80vh; overflow-y:auto; }
+.video-card { display:flex; margin-bottom:10px; background:white; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); cursor:pointer; }
+.video-card img { width:120px; height:70px; object-fit:cover; border-radius:10px 0 0 10px; }
+.video-info { padding:5px 10px; display:flex; flex-direction:column; justify-content:center; }
+.video-info h4 { margin:0; font-size:14px; color:#333; }
+.video-info p { margin:2px 0 0 0; font-size:12px; color:#666; }
+video { width:100%; max-height:70vh; border-radius:12px; }
+@media(max-width:768px){ .container { flex-direction:column; } .playlist { max-height:none; } }
+</style>
+</head>
 <body>
-<h1>JalsaZee Video List</h1>
-<div id="container">
-
-<div style="margin-bottom:20px;">
-<h3>99.mp4</h3>
-<a href="play.html?url=https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/99.mp4" target="_blank">
-<img src="https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/99.jpg" width="200">
-</a>
+<header>JalsaZee Player</header>
+<div class="container">
+    <div class="player">
+        <video id="main-video" controls autoplay>
+            <source src="" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+        <h3 id="video-title"></h3>
+        <p id="video-desc"></p>
+    </div>
+    <div class="playlist" id="playlist"></div>
 </div>
+<script>
+const videos = [{"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/99.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/99.jpg", "title": "99.mp4", "description": "Watch 99.mp4 full episode"}, {"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2.jpg", "title": "Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2.mp4", "description": "Watch Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2.mp4 full episode"}, {"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram.jpg", "title": "Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram.mp4", "description": "Watch Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram.mp4 full episode"}];
+const playlist = document.getElementById('playlist');
+const mainVideo = document.getElementById('main-video');
+const videoTitle = document.getElementById('video-title');
+const videoDesc = document.getElementById('video-desc');
 
-<div style="margin-bottom:20px;">
-<h3>Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2.mp4</h3>
-<a href="play.html?url=https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2.mp4" target="_blank">
-<img src="https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2.jpg" width="200">
-</a>
-</div>
+function loadVideo(video){
+    mainVideo.src = video.url;
+    videoTitle.textContent = video.title || "Video";
+    videoDesc.textContent = video.description || "";
+    mainVideo.play();
+}
 
-<div style="margin-bottom:20px;">
-<h3>Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram.mp4</h3>
-<a href="play.html?url=https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram.mp4" target="_blank">
-<img src="https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram.jpg" width="200">
-</a>
-</div>
-</div></body></html>
+videos.forEach(video=>{
+    const card = document.createElement('div');
+    card.className='video-card';
+    card.innerHTML=`<img src="${video.thumbnail}" alt="${video.title}">
+        <div class="video-info">
+        <h4>${video.title || "Video"}</h4>
+        <p>${video.description || ""}</p>
+        </div>`;
+    card.addEventListener('click',()=>loadVideo(video));
+    playlist.appendChild(card);
+});
+
+if(videos.length>0) loadVideo(videos[0]);
+</script>
+</body>
+</html>
