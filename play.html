@@ -5,13 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shajazada Bhai Video Player</title>
 <style>
-body { margin:0; font-family: Arial, sans-serif; background:#f7f7f7; display:flex; flex-direction:column; align-items:center;}
+body { margin:0; font-family: Arial, sans-serif; background:#f7f7f7; display:flex; flex-direction:column; align-items:center; }
 header { width:100%; background:#ff0000; color:white; text-align:center; padding:12px 0; font-size:20px; font-weight:bold; position:fixed; top:0; left:0; z-index:1000; }
 .player-container { width:100%; max-width:600px; margin-top:60px; display:flex; flex-direction:column; }
-video { width:100%; height:auto; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
-h3 { font-size:18px; margin:10px 0 5px 0; color:#333; }
-p { font-size:13px; color:#666; margin:0 0 10px 0; }
-.playlist { display:flex; flex-direction:column; gap:8px; overflow-y:auto; max-height:calc(100vh - 380px); margin-top:10px; }
+video { width:100%; height:auto; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); position:fixed; top:60px; left:0; right:0; max-height:45vh; z-index:999; }
+.playlist { display:flex; flex-direction:column; gap:8px; margin-top:calc(45vh + 70px); width:100%; max-width:600px; overflow-y:auto; max-height:calc(100vh - 45vh - 70px); padding:0 10px; }
 .playlist-card { display:flex; background:white; border-radius:8px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.1); cursor:pointer; }
 .playlist-card img { width:100px; height:60px; object-fit:cover; }
 .playlist-info { padding:5px; display:flex; flex-direction:column; justify-content:center; }
@@ -27,8 +25,6 @@ p { font-size:13px; color:#666; margin:0 0 10px 0; }
     <source src="" type="video/mp4">
     Your browser does not support HTML5 video.
 </video>
-<h3 id="video-title"></h3>
-<p id="video-desc"></p>
 <div class="playlist" id="playlist"></div>
 
 <script>
@@ -37,8 +33,6 @@ const videoData = [{"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/
 function loadVideo(url,title,desc){
     const player = document.getElementById('video-player');
     player.src = url;
-    document.getElementById('video-title').textContent = title;
-    document.getElementById('video-desc').textContent = desc;
     document.querySelectorAll('.playlist-card').forEach(c => c.classList.remove('active'));
     const activeCard = Array.from(document.querySelectorAll('.playlist-card')).find(c => c.dataset.url === url);
     if(activeCard) activeCard.classList.add('active');
