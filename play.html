@@ -6,7 +6,9 @@
 <title>JalsaZee Video Player</title>
 <style>
 body { margin:0; font-family: Arial, sans-serif; background:#f7f7f7; text-align:center; padding:20px; }
-video { width:100%; max-width:720px; height:auto; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
+video { width:100%; max-width:900px; height:auto; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); margin-bottom:10px; }
+h3 { font-size:20px; margin:10px 0 5px 0; color:#333; }
+p { font-size:14px; color:#666; margin:0 0 15px 0; }
 </style>
 </head>
 <body>
@@ -17,13 +19,13 @@ video { width:100%; max-width:720px; height:auto; border-radius:12px; box-shadow
 <h3 id="video-title"></h3>
 <p id="video-desc"></p>
 <script>
-const params=new URLSearchParams(window.location.search);
-const url=params.get('url');
-const title=params.get('title')||"Video";
-const desc=params.get('desc')||"";
-document.getElementById('video-player').src=url;
-document.getElementById('video-title').textContent=title;
-document.getElementById('video-desc').textContent=desc;
+const params = new URLSearchParams(window.location.search);
+const url = params.get('url');
+const title = params.get('title') || "Video";
+const desc = params.get('desc') || "";
+document.getElementById('video-player').src = url;
+document.getElementById('video-title').textContent = title;
+document.getElementById('video-desc').textContent = desc;
 </script>
 </body>
 </html>
