@@ -7,9 +7,9 @@
 <style>
 body { margin:0; font-family: Arial, sans-serif; background:#f7f7f7; display:flex; flex-direction:column; height:100vh; }
 header { background:#ff0000; color:white; padding:12px 20px; text-align:center; font-size:22px; font-weight:bold; position:sticky; top:0; z-index:1000; }
-.player-container { display:flex; flex-direction:column; max-width:600px; margin:0 auto; flex:1; overflow:hidden; }
-video { width:100%; max-height:40vh; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
-.video-info { padding:10px; background:white; border-radius:0 0 12px 12px; }
+.player-container { display:flex; flex-direction:column; flex:1; max-width:900px; margin:0 auto; overflow:hidden; }
+video { width:100%; max-height:50vh; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
+.video-info { padding:10px; background:white; }
 .video-info h3 { margin:0; font-size:18px; color:#333; }
 .video-info p { margin:5px 0 0 0; font-size:13px; color:#666; }
 .playlist { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px; padding:10px; }
@@ -19,6 +19,13 @@ video { width:100%; max-height:40vh; border-radius:12px; box-shadow:0 4px 8px rg
 .playlist-info h4 { margin:0; font-size:14px; color:#333; }
 .playlist-info p { margin:2px 0 0 0; font-size:11px; color:#666; }
 .active { border-left:4px solid #ff0000; }
+
+/* Desktop vs Mobile */
+@media(min-width:768px){
+  .player-container { flex-direction:row; gap:10px; }
+  video { max-height:none; flex:2; }
+  .playlist { flex:1; max-height:calc(100vh - 100px); }
+}
 </style>
 </head>
 <body>
@@ -28,11 +35,13 @@ video { width:100%; max-height:40vh; border-radius:12px; box-shadow:0 4px 8px rg
     <source src="" type="video/mp4">
     Your browser does not support HTML5 video.
 </video>
+<div style="flex:1; display:flex; flex-direction:column;">
 <div class="video-info">
     <h3 id="video-title"></h3>
     <p id="video-desc"></p>
 </div>
 <div class="playlist" id="playlist"></div>
+</div>
 </div>
 
 <script>
