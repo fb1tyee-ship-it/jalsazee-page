@@ -5,27 +5,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JalsaZee Video Player</title>
 <style>
-body { margin:0; font-family: Arial, sans-serif; background:#f7f7f7; text-align:center; padding:20px; }
-video { width:100%; max-width:900px; height:auto; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); margin-bottom:10px; }
-h3 { font-size:20px; margin:10px 0 5px 0; color:#333; }
-p { font-size:14px; color:#666; margin:0 0 15px 0; }
+body { margin:0; font-family: Arial, sans-serif; background:#f7f7f7; }
+.player-container { display:flex; flex-direction:column; max-width:600px; margin:0 auto; padding:10px; }
+video { width:100%; height:auto; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
+h3 { font-size:18px; margin:10px 0 5px 0; color:#333; }
+p { font-size:13px; color:#666; margin:0 0 10px 0; }
+.playlist { display:flex; flex-direction:column; gap:8px; margin-top:10px; max-height:calc(100vh - 400px); overflow-y:auto; }
+.playlist-card { display:flex; background:white; border-radius:8px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.1); cursor:pointer; }
+.playlist-card img { width:100px; height:60px; object-fit:cover; }
+.playlist-info { padding:5px; display:flex; flex-direction:column; justify-content:center; }
+.playlist-info h4 { margin:0; font-size:14px; color:#333; }
+.playlist-info p { margin:2px 0 0 0; font-size:11px; color:#666; }
+.active { border-left:4px solid #ff0000; }
 </style>
 </head>
 <body>
+<div class="player-container">
 <video id="video-player" controls autoplay>
     <source src="" type="video/mp4">
     Your browser does not support HTML5 video.
 </video>
 <h3 id="video-title"></h3>
 <p id="video-desc"></p>
+
+<div class="playlist" id="playlist"></div>
+
 <script>
+const videoData = [{"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/99.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/99.jpg", "title": "99", "description": ""}, {"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2.jpg", "title": "Phulki_S01E788_Phulki_August_15_2025_360p_ZEE5_WEB_DL_Bengali_AAC2", "description": ""}, {"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram.jpg", "title": "Rajrajeshwari_Rani_Bhabani_S01E40_Ramkanto's_Visit_to_Bakulgram", "description": ""}];
+
+function loadVideo(url,title,desc){
+    const player = document.getElementById('video-player');
+    player.src = url;
+    document.getElementById('video-title').textContent = title;
+    document.getElementById('video-desc').textContent = desc;
+
+    document.querySelectorAll('.playlist-card').forEach(c => c.classList.remove('active'));
+    const activeCard = Array.from(document.querySelectorAll('.playlist-card')).find(c => c.dataset.url === url);
+    if(activeCard) activeCard.classList.add('active');
+}
+
 const params = new URLSearchParams(window.location.search);
-const url = params.get('url');
-const title = params.get('title') || "Video";
-const desc = params.get('desc') || "";
-document.getElementById('video-player').src = url;
-document.getElementById('video-title').textContent = title;
-document.getElementById('video-desc').textContent = desc;
+loadVideo(params.get('url'), params.get('title') || 'Video', params.get('desc') || '');
+
+const playlistContainer = document.getElementById('playlist');
+videoData.forEach(v=>{
+    const card = document.createElement('div');
+    card.className = 'playlist-card';
+    card.dataset.url = v.url;
+    card.innerHTML = `<img src="${v.thumbnail}" alt="${v.title}">
+                      <div class="playlist-info">
+                        <h4>${v.title}</h4>
+                        <p>${v.description}</p>
+                      </div>`;
+    card.onclick = ()=>loadVideo(v.url,v.title,v.description);
+    playlistContainer.appendChild(card);
+});
 </script>
+</div>
 </body>
 </html>
