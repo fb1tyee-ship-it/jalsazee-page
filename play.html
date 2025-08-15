@@ -39,11 +39,7 @@ function loadVideo(url,title,desc){
     const player = document.getElementById('video-player');
     player.src = url;
 
-    // Truncate title to 15 characters
-    let shortTitle = title;
-    if(title.length > 15){
-        shortTitle = title.substring(0,15) + "...";
-    }
+    let shortTitle = title.length > 15 ? title.substring(0,15) + "..." : title;
 
     document.getElementById('video-title').textContent = shortTitle;
     document.getElementById('video-desc').textContent = desc;
