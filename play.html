@@ -1,82 +1,49 @@
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Player with Ads</title>
-<style>
-body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;display:flex;flex-direction:column;align-items:center}
-header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:20px;width:100%;position:sticky;top:0}
-.player-container{display:flex;flex-direction:column;max-width:600px;width:100%;padding:10px;position:relative}
-video{width:100%;border-radius:10px}
-#playlist{display:flex;flex-direction:column;gap:8px;margin-top:10px;max-height:calc(100vh-250px);overflow-y:auto}
-.playlist-card{display:flex;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 5px rgba(0,0,0,0.1);cursor:pointer}
-.playlist-card img{width:100px;height:60px;object-fit:cover}
-.playlist-info{padding:5px;display:flex;flex-direction:column;justify-content:center}
-.playlist-info h4{margin:0;font-size:14px}
-.playlist-info p{margin:2px 0 0 0;font-size:12px;color:#555}
-.active{border-left:4px solid #ff0000}
-#ad-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;font-size:18px;z-index:10}
-#countdown{margin-top:10px;font-size:20px;font-weight:bold}
-</style>
-</head><body>
-<header>Shajazada Bhai Videos</header>
-<div class="player-container">
-<video id="video-player" controls autoplay><source src="" type="video/mp4"></video>
-<div id="ad-overlay">
-<p>Ad is opening in browser...</p>
-<p id="countdown">8</p>
-</div>
-<h3 id="video-title"></h3>
-<p id="video-desc"></p>
-<div class="playlist" id="playlist"></div>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Player</title>
+<style>body{margin:0;font-family:Arial;background:#f7f7f7;display:flex;flex-direction:column;align-items:center} header{background:red;color:white;padding:12px;text-align:center;width:100%;position:sticky;top:0} .player-container{max-width:600px;width:100%;padding:10px;position:relative} video{width:100%;border-radius:10px} #playlist{display:flex;flex-direction:column;gap:8px;margin-top:10px;overflow-y:auto} .playlist-card{display:flex;background:white;border-radius:8px;overflow:hidden;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,0.1)} .playlist-card img{width:100px;height:60px;object-fit:cover} .playlist-info{padding:5px;flex:1} .active{border-left:4px solid red} #ad-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);color:white;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:10} #countdown{margin-top:10px;font-size:22px}</style></head>
+<body><header>Shajazada Bhai Videos</header><div class="player-container"><video id="video-player" controls autoplay><source src="" type="video/mp4"></video><div id="ad-overlay"><p>Ad is opening in browser...</p><p id="countdown">8</p></div><h3 id="video-title"></h3><p id="video-desc"></p><div id="playlist"></div></div>
 <script>
-const videoData = [{"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Chiroshokha_S01E201_Ananyas_Venomous_Whisper_480p_JH_WEB_DL_Bengali.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Chiroshokha_S01E201_Ananyas_Venomous_Whisper_480p_JH_WEB_DL_Bengali.jpg", "title": "Chiroshokha_S01E201_Ananyas_Venomous_Whisper_480p_JH_WEB_DL_Bengali", "description": "2025-08-17 02:31 AM"}, {"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Geeta_LL_B_S01E633_Agnijit%27s_Uncontrollable_Anger_480pp_JioHotstar.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Geeta_LL_B_S01E633_Agnijit%27s_Uncontrollable_Anger_480pp_JioHotstar.jpg", "title": "Geeta_LL_B_S01E633_Agnijit's_Uncontrollable_Anger_480pp_JioHotstar", "description": "2025-08-17 02:31 AM"}, {"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Kothha_S01E611_Kothhas_Suspicion_on_Chitra_480p_JH_WEB_DL_Bengali.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Kothha_S01E611_Kothhas_Suspicion_on_Chitra_480p_JH_WEB_DL_Bengali.jpg", "title": "Kothha_S01E611_Kothhas_Suspicion_on_Chitra_480p_JH_WEB_DL_Bengali", "description": "2025-08-17 02:31 AM"}, {"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Lokkhi_Jhnapi_S01E18_Jhnapi_Strikes_Ronit_480pp_JioHotstar_WEB_DL.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Lokkhi_Jhnapi_S01E18_Jhnapi_Strikes_Ronit_480pp_JioHotstar_WEB_DL.jpg", "title": "Lokkhi_Jhnapi_S01E18_Jhnapi_Strikes_Ronit_480pp_JioHotstar_WEB_DL", "description": "2025-08-17 02:31 AM"}];
-const ads = ["https://www.profitableratecpm.com/mw7ztdgnmi?key=02fe040d5b278090e77e6f3d36b9dcda", "https://www.profitableratecpm.com/mvgr3vcec?key=1ae7e70b622ff6e66c421c3b010fee11", "https://www.profitableratecpm.com/u3bpd959ds?key=17a24dd5727d44c20893ba3e89cff40a", "https://www.profitableratecpm.com/z513xcxn?key=2716991f6639174f0dbf9f9bc382eea0", "https://www.profitableratecpm.com/dz7akcqr8?key=4a57b656f4105bcdd6f76499ce967f2a", "https://www.profitableratecpm.com/kkrnkev1bj?key=aa678f2b1f704590b292aea258a8db75", "https://www.profitableratecpm.com/fmx6g979fh?key=c2c833ab570aa35dce68fd99904f4f3f", "https://www.profitableratecpm.com/nf9jh4dk?key=652241112e3a2bb3113616e06d6e6536", "https://www.profitableratecpm.com/mtg1wzskpv?key=2d102a25de9531a4a26d3a72582b0eeb", "https://www.profitableratecpm.com/rffd4r7giv?key=0124a8cb858c0a4580a84fd6598500d1", "https://www.profitableratecpm.com/mc25ir2059?key=c62be8f56e59dcfbb2cf7f4622d16ff4", "https://www.profitableratecpm.com/kh9qjvbf46?key=1e8d2955dba8bf2f0135666b2dcefa7d", "https://www.profitableratecpm.com/zhhpg2wz?key=cda5e4d770a778a1d7a23650ecb60b93", "https://www.profitableratecpm.com/n28xt53jen?key=c29ab1c126677a64770bd756f4516a8f", "https://www.profitableratecpm.com/xg0ni3ct?key=a9c6fd3135c9885f74c146c8f1ca005e", "https://www.profitableratecpm.com/pznr2znaag?key=0800ade2292afe2ce7793624e6ab47f2"];
-const player = document.getElementById('video-player');
-const adOverlay = document.getElementById('ad-overlay');
-const countdownEl = document.getElementById('countdown');
+const videoData = [{"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Chiroshokha_S01E201_Ananyas_Venomous_Whisper_480p_JH_WEB_DL_Bengali.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Chiroshokha_S01E201_Ananyas_Venomous_Whisper_480p_JH_WEB_DL_Bengali.jpg", "title": "Chiroshokha_S01E201_Ananyas_Venomous_Whisper_480p_JH_WEB_DL_Bengali", "description": "2025-08-17 02:31 AM"}, {"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Geeta_LL_B_S01E633_Agnijit%27s_Uncontrollable_Anger_480pp_JioHotstar.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Geeta_LL_B_S01E633_Agnijit's_Uncontrollable_Anger_480pp_JioHotstar.jpg", "title": "Geeta_LL_B_S01E633_Agnijit's_Uncontrollable_Anger_480pp_JioHotstar", "description": "2025-08-17 02:31 AM"}, {"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Kothha_S01E611_Kothhas_Suspicion_on_Chitra_480p_JH_WEB_DL_Bengali.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Kothha_S01E611_Kothhas_Suspicion_on_Chitra_480p_JH_WEB_DL_Bengali.jpg", "title": "Kothha_S01E611_Kothhas_Suspicion_on_Chitra_480p_JH_WEB_DL_Bengali", "description": "2025-08-17 02:31 AM"}, {"url": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Lokkhi_Jhnapi_S01E18_Jhnapi_Strikes_Ronit_480pp_JioHotstar_WEB_DL.mp4", "thumbnail": "https://pub-408fe635470c419d846ad1d4d011edbb.r2.dev/Lokkhi_Jhnapi_S01E18_Jhnapi_Strikes_Ronit_480pp_JioHotstar_WEB_DL.jpg", "title": "Lokkhi_Jhnapi_S01E18_Jhnapi_Strikes_Ronit_480pp_JioHotstar_WEB_DL", "description": "2025-08-17 02:31 AM"}];
+const ads = ["https://www.profitableratecpm.com/mw7ztdgnmi?key=02fe040d5b278090e77e6f3d36b9dcda", "https://www.profitableratecpm.com/mvgr3vcec?key=1ae7e70b622ff6e66c421c3b010fee11", "https://www.profitableratecpm.com/u3bpd959ds?key=17a24dd5727d44c20893ba3e89cff40a", "https://www.profitableratecpm.com/z513xcxn?key=2716991f6639174f0dbf9f9bc382eea0", "https://www.profitableratecpm.com/dz7akcqr8?key=4a57b656f4105bcdd6f76499ce967f2a", "https://www.profitableratecpm.com/kkrnkev1bj?key=aa678f2b1f704590b292aea258a8db75", "https://www.profitableratecpm.com/fmx6g979fh?key=c2c833ab570aa35dce68fd99904f4f3f", "https://www.profitableratecpm.com/nf9jh4dk?key=652241112e3a2bb3113616e06d6e6536"];
+const player=document.getElementById('video-player');
+const overlay=document.getElementById('ad-overlay');
+const countdown=document.getElementById('countdown');
+let adActive=false;
 
 function playVideoWithAd(url,title,desc){
-    adOverlay.style.display='flex';
-    player.style.display='none';
-    let timeLeft = 8;
-    countdownEl.textContent = timeLeft;
-    let canPlay = false;
-
-    const interval = setInterval(()=>{
-        timeLeft -= 1;
-        countdownEl.textContent = timeLeft;
-        if(timeLeft<=0){
-            clearInterval(interval);
-            canPlay = true;
-            adOverlay.style.display='none';
-            player.style.display='block';
-            loadVideo(url,title,desc);
-        }
-    },1000);
-
-    const adUrl = ads[Math.floor(Math.random()*ads.length)];
-    // direct browser open
-    window.open(adUrl,'_blank');
+  adActive=true;
+  overlay.style.display='flex';
+  player.style.display='none';
+  let t=8;
+  countdown.textContent=t;
+  const int=setInterval(()=>{
+    t--;countdown.textContent=t;
+    if(t<=0){clearInterval(int);adActive=false;overlay.style.display='none';player.style.display='block';loadVideo(url,title,desc);player.play();}
+  },1000);
+  const adUrl=ads[Math.floor(Math.random()*ads.length)];
+  window.open(adUrl,'_blank');
 }
 
 function loadVideo(url,title,desc){
-    player.src = decodeURIComponent(url);
-    document.getElementById('video-title').textContent = decodeURIComponent(title);
-    document.getElementById('video-desc').textContent = decodeURIComponent(desc);
-    document.querySelectorAll('.playlist-card').forEach(c=>c.classList.remove('active'));
-    const activeCard = Array.from(document.querySelectorAll('.playlist-card')).find(c=>c.dataset.url===url);
-    if(activeCard) activeCard.classList.add('active');
+  player.src=decodeURIComponent(url);
+  document.getElementById('video-title').textContent=decodeURIComponent(title);
+  document.getElementById('video-desc').textContent=decodeURIComponent(desc);
+  document.querySelectorAll('.playlist-card').forEach(c=>c.classList.remove('active'));
+  const active=Array.from(document.querySelectorAll('.playlist-card')).find(c=>c.dataset.url===url);
+  if(active) active.classList.add('active');
 }
 
-const params = new URLSearchParams(window.location.search);
-playVideoWithAd(params.get('url'),params.get('title')||'Video',params.get('desc')||'');
+const p=new URLSearchParams(window.location.search);
+playVideoWithAd(p.get('url'),p.get('title')||'Video',p.get('desc')||'');
 
-const playlistContainer = document.getElementById('playlist');
-videoData.forEach(function(v){
-    const card = document.createElement('div');
-    card.className='playlist-card';
-    card.dataset.url=encodeURIComponent(v.url);
-    card.innerHTML=`<img src="${v.thumbnail}" alt="${v.title}"><div class="playlist-info"><h4>${v.title}</h4><p>${v.description}</p></div>`;
-    card.onclick=()=>playVideoWithAd(encodeURIComponent(v.url),encodeURIComponent(v.title),encodeURIComponent(v.description));
-    playlistContainer.appendChild(card);
+const list=document.getElementById('playlist');
+videoData.forEach(v=>{
+  const card=document.createElement('div');
+  card.className='playlist-card';
+  card.dataset.url=encodeURIComponent(v.url);
+  card.innerHTML=`<img src="${v.thumbnail}"><div class='playlist-info'><h4>${v.title}</h4><p>${v.description}</p></div>`;
+  card.onclick=()=>playVideoWithAd(encodeURIComponent(v.url),encodeURIComponent(v.title),encodeURIComponent(v.description));
+  list.appendChild(card);
 });
-</script></div></body></html>
+
+window.addEventListener("beforeunload",function(e){if(adActive){window.location.href="index.html";}});
+</script></body></html>
