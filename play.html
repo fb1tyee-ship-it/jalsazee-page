@@ -7,12 +7,11 @@ header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:2
 .player-container{display:flex;flex-direction:column;max-width:600px;width:100%;padding:10px;position:relative}
 video{width:100%;border-radius:10px}
 #playlist{display:flex;flex-direction:column;gap:8px;margin-top:10px;max-height:calc(100vh-250px);overflow-y:auto}
-.playlist-card{display:flex;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 5px rgba(0,0,0,0.1);cursor:pointer;flex-direction:column}
-.playlist-card img{width:100%;height:150px;object-fit:cover}
+.playlist-card{display:flex;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 5px rgba(0,0,0,0.1);cursor:pointer}
+.playlist-card img{width:100px;height:60px;object-fit:cover}
 .playlist-info{padding:5px;display:flex;flex-direction:column;justify-content:center}
 .playlist-info h4{margin:0;font-size:14px}
 .playlist-info p{margin:2px 0 0 0;font-size:12px;color:#555}
-.ad-container{margin-top:5px;text-align:center}
 .active{border-left:4px solid #ff0000}
 #ad-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;font-size:18px;z-index:10}
 #countdown{margin-top:10px;font-size:20px;font-weight:bold}
@@ -40,7 +39,7 @@ function playVideoWithAd(url,title,desc){
     adWatched = false;
     adOverlay.style.display='flex';
     player.style.display='none';
-    let timeLeft = 5; // 5 সেকেন্ড
+    let timeLeft = 5; // 5 seconds
     countdownEl.textContent = timeLeft;
 
     const adUrl = ads[Math.floor(Math.random()*ads.length)];
@@ -73,35 +72,21 @@ function loadVideo(url,title,desc){
     player.src = decodeURIComponent(url);
     document.getElementById('video-title').textContent = decodeURIComponent(title);
     document.getElementById('video-desc').textContent = decodeURIComponent(desc);
+    document.querySelectorAll('.playlist-card').forEach(c=>c.classList.remove('active'));
+    const activeCard = Array.from(document.querySelectorAll('.playlist-card')).find(c=>c.dataset.url===url);
+    if(activeCard) activeCard.classList.add('active');
 }
 
-function createPlaylist(){
-    const container = document.getElementById('playlist');
-    videoData.forEach(v=>{
-        const card = document.createElement('div');
-        card.className='playlist-card';
-        card.innerHTML = `
-            <img src="${v.thumbnail||'default.jpg'}">
-            <div class="playlist-info"><h4>${v.title}</h4><p>${v.description}</p></div>
-            <div class="ad-container">
-<script type="text/javascript">
-atOptions = {
-'key' : '8939ef6f039bb7b94d58f794b82a27f5',
-'format' : 'iframe',
-'height' : 50,
-'width' : 320,
-'params' : {}
-};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/8939ef6f039bb7b94d58f794b82a27f5/invoke.js"></script>
-</div>
-        `;
-        card.onclick = ()=>playVideoWithAd(encodeURIComponent(v.url),encodeURIComponent(v.title),encodeURIComponent(v.description));
-        container.appendChild(card);
-    });
-}
+const params = new URLSearchParams(window.location.search);
+playVideoWithAd(params.get('url'),params.get('title')||'Video',params.get('desc')||'');
 
-createPlaylist();
-
-</script>
-</div></body></html>
+const playlistContainer = document.getElementById('playlist');
+videoData.forEach(function(v){
+    const card = document.createElement('div');
+    card.className='playlist-card';
+    card.dataset.url=encodeURIComponent(v.url);
+    card.innerHTML=`<img src="${v.thumbnail}" alt="${v.title}"><div class="playlist-info"><h4>${v.title}</h4><p>${v.description}</p></div>`;
+    card.onclick=()=>playVideoWithAd(encodeURIComponent(v.url),encodeURIComponent(v.title),encodeURIComponent(v.description));
+    playlistContainer.appendChild(card);
+});
+</script></div></body></html>
