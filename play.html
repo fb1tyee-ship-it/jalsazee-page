@@ -39,7 +39,7 @@ function playVideoWithAd(url,title,desc){
     adWatched = false;
     adOverlay.style.display='flex';
     player.style.display='none';
-    let timeLeft = 5; // 5 সেকেন্ড
+    let timeLeft = 5; // 5 seconds
     countdownEl.textContent = timeLeft;
 
     const adUrl = ads[Math.floor(Math.random()*ads.length)];
