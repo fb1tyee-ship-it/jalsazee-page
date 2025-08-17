@@ -38,13 +38,22 @@ function playVideoWithAd(url,title,desc){
     let timeLeft = 5;
     countdownEl.textContent = timeLeft;
 
+    // ✅ popup খোলা হবে user click এর সময়েই (popup-block হবে না)
     const adUrl = ads[Math.floor(Math.random()*ads.length)];
-    const adWindow = window.open(adUrl,'_blank');
+    const adWindow = window.open(adUrl,'_blank');  
 
+    if(!adWindow){
+        alert("⚠️ Please allow popups to watch the ad.");
+        adOverlay.style.display='none';
+        return;
+    }
+
+    // ✅ Timer run হবে আলাদা করে
     const interval = setInterval(function(){
-        if(adWindow.closed){
+        if(adWindow.closed && timeLeft > 0){
             clearInterval(interval);
             alert('⚠️ Please watch the ad for 5 seconds to play the video.');
+            adOverlay.style.display='none';
             return;
         }
         timeLeft -= 1;
