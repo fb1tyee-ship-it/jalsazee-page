@@ -4,15 +4,14 @@ header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:2
 .player-container{display:flex;flex-direction:column;max-width:600px;width:100%;padding:10px;position:relative}
 video{width:100%;border-radius:10px}
 #playlist{display:flex;flex-direction:column;gap:8px;margin-top:10px;max-height:calc(100vh-250px);overflow-y:auto}
-.playlist-card{display:flex;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 5px rgba(0,0,0,0.1);cursor:pointer;flex-direction:column}
-.playlist-card img{width:100%;height:60px;object-fit:cover}
+.playlist-card{display:flex;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 5px rgba(0,0,0,0.1);cursor:pointer}
+.playlist-card img{width:100px;height:60px;object-fit:cover}
 .playlist-info{padding:5px;display:flex;flex-direction:column;justify-content:center}
 .playlist-info h4{margin:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .playlist-info p{margin:2px 0 0 0;font-size:12px;color:#555}
 .active{border-left:4px solid #ff0000}
 #ad-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;font-size:18px;z-index:10}
 #countdown{margin-top:10px;font-size:20px;font-weight:bold}
-.ad-container{margin-top:5px;text-align:center}
 </style></head><body>
 <header>Shajazada Bhai Videos</header>
 <div class="player-container">
@@ -70,40 +69,36 @@ function loadVideo(url,title,desc){
     document.getElementById('video-title').textContent = decodeURIComponent(title.length>15?title.slice(0,15)+'…':title);
     document.getElementById('video-desc').textContent = decodeURIComponent(desc);
     document.querySelectorAll('.playlist-card').forEach(c=>c.classList.remove('active'));
-    const activeCard = Array.from(document.querySelectorAll('.playlist-card')).find(c=>decodeURIComponent(c.dataset.url)===decodeURIComponent(url));
+    const activeCard = Array.from(document.querySelectorAll('.playlist-card')).find(c=>c.dataset.url===url);
     if(activeCard) activeCard.classList.add('active');
 }
 
 function renderPlaylist(){
     const playlistEl = document.getElementById('playlist');
-    playlistEl.innerHTML='';
     videoData.forEach(v=>{
         const card = document.createElement('div');
         card.className='playlist-card';
         card.dataset.url = encodeURIComponent(v.url);
-        card.innerHTML=`
-            <img src="${v.thumbnail || 'default.jpg'}" alt="">
-            <div class="playlist-info">
-                <h4>${v.title}</h4>
-                <p>${v.description}</p>
-            </div>
-            <div class="ad-container">
-                <script type="text/javascript">
-                  atOptions = { 'key':'8939ef6f039bb7b94d58f794b82a27f5','format':'iframe','height':50,'width':320,'params':{} };
-                </script>
-                <script type="text/javascript" src="//www.highperformanceformat.com/8939ef6f039bb7b94d58f794b82a27f5/invoke.js"></script>
-            </div>
-        `;
-        card.onclick=()=>playVideoWithAd(v.url,v.title,v.description);
+        card.innerHTML=`<img src="${v.thumbnail||'default.jpg'}" alt=""><div class="playlist-info"><h4>${v.title}</h4><p>${v.description}</p></div>`;
+        card.onclick=()=>playVideoWithAd(card.dataset.url,v.title,v.description);
         playlistEl.appendChild(card);
     });
 }
-renderPlaylist();
 
-// Auto load first video
-if(videoData.length>0){
-    playVideoWithAd(videoData[0].url,videoData[0].title,videoData[0].description);
+function getUrlParams(){
+    const params = new URLSearchParams(window.location.search);
+    return {
+        url: params.get('url')||'',
+        title: params.get('title')||'',
+        desc: params.get('desc')||''
+    };
 }
+
+window.onload = function(){
+    renderPlaylist();
+    const params = getUrlParams();
+    if(params.url) playVideoWithAd(params.url,params.title,params.desc);
+};
 </script>
 </div>
 </body></html>
