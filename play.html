@@ -17,7 +17,6 @@ video{width:100%;border-radius:10px}
 .playlist-info p{margin:2px 0 0 0;font-size:12px;color:#555}
 .active{border-left:4px solid #ff0000}
 #ad-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;font-size:18px;z-index:10}
-#ad-overlay iframe{width:100%;height:100%;border:none;border-radius:10px}
 #countdown{margin-top:10px;font-size:20px;font-weight:bold}
 </style>
 </head>
@@ -26,7 +25,7 @@ video{width:100%;border-radius:10px}
 <div class="player-container">
 <video id="video-player" controls autoplay><source src="" type="video/mp4"></video>
 <div id="ad-overlay">
-<p>Ad is loading...</p>
+<p>Ad is opening...</p>
 <p id="countdown">5</p>
 </div>
 <h3 id="video-title"></h3>
@@ -48,16 +47,17 @@ function playVideoWithAd(url,title,desc){
     let timeLeft = 5;
     countdownEl.textContent = timeLeft;
 
-    // iframe দিয়ে সরাসরি অ্যাড দেখানো
-    adOverlay.innerHTML = `<iframe src="${ads[Math.floor(Math.random()*ads.length)]}" allowfullscreen></iframe><p id="countdown">${timeLeft}</p>`;
+    // Popup blocker safe: user click থেকে নতুন tab
+    const adUrl = ads[Math.floor(Math.random()*ads.length)];
+    const adWindow = window.open(adUrl, '_blank');
 
     const interval = setInterval(function(){
         timeLeft -= 1;
-        const countdown = document.getElementById('countdown');
-        if(countdown) countdown.textContent = timeLeft;
+        countdownEl.textContent = timeLeft;
         if(timeLeft <= 0){
             clearInterval(interval);
             adWatched = true;
+            if(adWindow && !adWindow.closed) adWindow.close();
             adOverlay.style.display='none';
             player.style.display='block';
             loadVideo(url,title,desc);
