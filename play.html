@@ -14,29 +14,37 @@ video{width:100%;border-radius:10px}
 <body>
 <header>Shajazada Bhai Videos</header>
 <div class="player-container">
-<video id="video-player" controls autoplay></video>
+<video id="video-player" controls></video>
 <h3 id="video-title"></h3>
 <p id="video-desc"></p>
 </div>
 <script>
-function getUrlParams(){{
+window.onload = function(){
     const params = new URLSearchParams(window.location.search);
-    return {{
-        url: params.get('url') || '',
-        title: params.get('title') || '',
-        desc: params.get('desc') || ''
-    }};
-}}
-window.onload = function(){{
-    const params = getUrlParams();
-    if(params.url){{
+    const url = params.get('url');
+    const title = params.get('title');
+    const desc = params.get('desc');
+
+    if(url){
         const player = document.getElementById('video-player');
-        player.src = decodeURIComponent(params.url);
-        document.getElementById('video-title').textContent = decodeURIComponent(params.title);
-        document.getElementById('video-desc').textContent = decodeURIComponent(params.desc);
-        player.play();
-    }}
-}};
+        const decodedUrl = decodeURIComponent(url);
+        player.src = decodedUrl;
+
+        const titleEl = document.getElementById('video-title');
+        const descEl = document.getElementById('video-desc');
+
+        titleEl.textContent = decodeURIComponent(title || '');
+        descEl.textContent = decodeURIComponent(desc || '');
+
+        player.load(); // Ensure browser registers new src
+        const playPromise = player.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log('⚠️ Autoplay blocked. Click video to play manually.', error);
+            });
+        }
+    }
+};
 </script>
 </body>
 </html>
