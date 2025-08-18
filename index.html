@@ -13,6 +13,9 @@ header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:2
 .video-info{padding:8px}
 .video-info h4{margin:0;font-size:16px}
 .video-info p{margin:4px 0 0 0;font-size:13px;color:#555}
+#video-player{width:100%;margin-top:10px;border-radius:10px;display:none}
+#ad-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);color:white;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;display:none}
+#countdown{font-size:24px;margin-top:10px}
 </style>
 </head>
 <body>
@@ -200,56 +203,49 @@ header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:2
 </div>
 
 </div>
+
+<!-- Video Player -->
+<video id="video-player" controls></video>
+
+<!-- Ad Overlay -->
+<div id="ad-overlay">
+<p>Ad is opening in browser...</p>
+<p id="countdown">5</p>
+</div>
+
 <script>
 const ads = ["https://www.profitableratecpm.com/mw7ztdgnmi?key=02fe040d5b278090e77e6f3d36b9dcda", "https://www.profitableratecpm.com/mvgr3vcec?key=1ae7e70b622ff6e66c421c3b010fee11", "https://www.profitableratecpm.com/u3bpd959ds?key=17a24dd5727d44c20893ba3e89cff40a", "https://www.profitableratecpm.com/z513xcxn?key=2716991f6639174f0dbf9f9bc382eea0", "https://www.profitableratecpm.com/dz7akcqr8?key=4a57b656f4105bcdd6f76499ce967f2a", "https://www.profitableratecpm.com/kkrnkev1bj?key=aa678f2b1f704590b292aea258a8db75", "https://www.profitableratecpm.com/fmx6g979fh?key=c2c833ab570aa35dce68fd99904f4f3f", "https://www.profitableratecpm.com/nf9jh4dk?key=652241112e3a2bb3113616e06d6e6536", "https://www.profitableratecpm.com/mtg1wzskpv?key=2d102a25de9531a4a26d3a72582b0eeb", "https://www.profitableratecpm.com/rffd4r7giv?key=0124a8cb858c0a4580a84fd6598500d1", "https://www.profitableratecpm.com/mc25ir2059?key=c62be8f56e59dcfbb2cf7f4622d16ff4", "https://www.profitableratecpm.com/kh9qjvbf46?key=1e8d2955dba8bf2f0135666b2dcefa7d", "https://www.profitableratecpm.com/zhhpg2wz?key=cda5e4d770a778a1d7a23650ecb60b93", "https://www.profitableratecpm.com/n28xt53jen?key=c29ab1c126677a64770bd756f4516a8f", "https://www.profitableratecpm.com/xg0ni3ct?key=a9c6fd3135c9885f74c146c8f1ca005e", "https://www.profitableratecpm.com/pznr2znaag?key=0800ade2292afe2ce7793624e6ab47f2"];
 const cards = document.querySelectorAll('.video-card');
-const player = document.createElement('video');
-player.id = 'video-player';
-player.controls = true;
-player.autoplay = true;
-player.style.width = '100%';
-document.body.appendChild(player);
-const titleEl = document.createElement('h3');
-titleEl.id = 'video-title';
-document.body.appendChild(titleEl);
-const descEl = document.createElement('p');
-descEl.id = 'video-desc';
-document.body.appendChild(descEl);
+const player = document.getElementById('video-player');
+const overlay = document.getElementById('ad-overlay');
+const countdownEl = document.getElementById('countdown');
 
 cards.forEach(c => {
     c.addEventListener('click', () => {
         const url = decodeURIComponent(c.dataset.url);
         const title = decodeURIComponent(c.dataset.title);
         const desc = decodeURIComponent(c.dataset.desc);
+
+        // Open ad in new popup
         const adUrl = ads[Math.floor(Math.random()*ads.length)];
         const adWindow = window.open(adUrl,'_blank');
+
+        // Show overlay & countdown
+        overlay.style.display = 'flex';
+        player.style.display = 'none';
         let timeLeft = 5;
-        const overlay = document.createElement('div');
-        overlay.style.position='fixed';
-        overlay.style.top='0';
-        overlay.style.left='0';
-        overlay.style.width='100%';
-        overlay.style.height='100%';
-        overlay.style.background='rgba(0,0,0,0.8)';
-        overlay.style.color='white';
-        overlay.style.display='flex';
-        overlay.style.flexDirection='column';
-        overlay.style.justifyContent='center';
-        overlay.style.alignItems='center';
-        overlay.style.zIndex='9999';
-        overlay.innerHTML = '<p>Ad is opening in browser...</p><p id="countdown">' + timeLeft + '</p>';
-        document.body.appendChild(overlay);
-        const countdownEl = document.getElementById('countdown');
+        countdownEl.textContent = timeLeft;
+
         const interval = setInterval(() => {
             timeLeft -= 1;
             countdownEl.textContent = timeLeft;
             if(timeLeft <= 0){
                 clearInterval(interval);
                 if(!adWindow.closed) adWindow.close();
-                document.body.removeChild(overlay);
+                overlay.style.display = 'none';
                 player.src = url;
-                titleEl.textContent = title.length>15?title.slice(0,15)+'…':title;
-                descEl.textContent = desc;
+                player.style.display = 'block';
+                player.play();
             }
         },1000);
     });
