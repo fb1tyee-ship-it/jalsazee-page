@@ -57,6 +57,15 @@ function playVideoWithAd(url){
     },1000);
 }
 
+function getUrlParams(){
+    const params = new URLSearchParams(window.location.search);
+    return {
+        url: params.get('url') || '',
+        title: params.get('title') || '',
+        desc: params.get('desc') || ''
+    };
+}
+
 function renderPlaylist(){
     const playlistEl = document.getElementById('playlist');
     videoData.forEach(v => {
@@ -71,6 +80,8 @@ function renderPlaylist(){
 
 window.onload = function(){
     renderPlaylist();
+    const params = getUrlParams();
+    if(params.url) playVideoWithAd(params.url);
 };
 </script>
 </div>
