@@ -9,16 +9,16 @@ body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;display:flex;flex-
 header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:20px;width:100%;position:sticky;top:0}
 .player-container{display:flex;flex-direction:column;max-width:600px;width:100%;padding:10px}
 video{width:100%;border-radius:10px}
-#video-title{font-size:14px; margin:5px 0;} /* ছোট ফন্টে টাইটেল */
-#video-desc{font-size:12px; color:#555; margin:2px 0;} /* বর্ণনা আরও subtle */
+#video-title{font-size:14px; margin:5px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+#video-desc{font-size:12px; color:#555; margin:2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 </style>
 </head>
 <body>
 <header>Shajazada Bhai Videos</header>
 <div class="player-container">
 <video id="video-player" controls></video>
-<h3 id="video-title"></h3>
-<p id="video-desc"></p>
+<h3 id="video-title" title=""></h3>
+<p id="video-desc" title=""></p>
 </div>
 <script>
 window.onload = function(){
@@ -35,10 +35,17 @@ window.onload = function(){
         const titleEl = document.getElementById('video-title');
         const descEl = document.getElementById('video-desc');
 
-        titleEl.textContent = decodeURIComponent(title || '');
-        descEl.textContent = decodeURIComponent(desc || '');
+        const decodedTitle = decodeURIComponent(title || '');
+        const decodedDesc = decodeURIComponent(desc || '');
 
-        player.load(); // Ensure browser registers new src
+        titleEl.textContent = decodedTitle;
+        descEl.textContent = decodedDesc;
+
+        // Mouse hover এ পূর্ণ টেক্সট tooltip দেখাবে
+        titleEl.title = decodedTitle;
+        descEl.title = decodedDesc;
+
+        player.load(); 
         const playPromise = player.play();
         if (playPromise !== undefined) {
             playPromise.catch(error => {
