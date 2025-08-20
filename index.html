@@ -187,6 +187,7 @@ header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:2
 
 <script>
 function openAdThenPlay(url,title,desc,adUrl){
+    // direct URL, no decodeURIComponent
     const adWindow = window.open(adUrl,'_blank');
     if(!adWindow){ alert('⚠️ Please allow popups in your browser!'); return; }
 
