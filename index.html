@@ -217,7 +217,7 @@ function openAdThenPlay(url,title,desc){
         }
     },1000);
 
-    // Back চাপলে যদি ৫ সেকেন্ড শেষ না হয় তাহলে index.html এ ফেরত পাঠাবে
+    // Back চেপে overlay চলাকালীন index.html এ ফেরত পাঠানো
     window.onpopstate = function(){
         if(!adFinished){
             if(!adWindow.closed) adWindow.close();
