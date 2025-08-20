@@ -49,8 +49,9 @@ video{width:100%;border-radius:10px}
   <p id="video-desc" title=""></p>
 </div>
 <script>
-function goBack(){ window.location.href="index.html"; }
-
+function goBack(){
+    window.location.href = "index.html";
+}
 window.onload = function(){
     const params = new URLSearchParams(window.location.search);
     const url = params.get('url');
@@ -59,10 +60,22 @@ window.onload = function(){
 
     if(url){
         const player = document.getElementById('video-player');
-        player.src = decodeURIComponent(url);
-        document.getElementById('video-title').textContent = decodeURIComponent(title||'');
-        document.getElementById('video-desc').textContent = decodeURIComponent(desc||'');
-        player.load();
+        const decodedUrl = decodeURIComponent(url);
+        player.src = decodedUrl;
+
+        const titleEl = document.getElementById('video-title');
+        const descEl = document.getElementById('video-desc');
+
+        const decodedTitle = decodeURIComponent(title || '');
+        const decodedDesc = decodeURIComponent(desc || '');
+
+        titleEl.textContent = decodedTitle;
+        descEl.textContent = decodedDesc;
+
+        titleEl.title = decodedTitle;
+        descEl.title = decodedDesc;
+
+        player.load(); 
         const playPromise = player.play();
         if(playPromise !== undefined){ playPromise.catch(error => { console.log('⚠️ Autoplay blocked.', error); }); }
     }
