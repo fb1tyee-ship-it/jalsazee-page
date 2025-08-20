@@ -5,37 +5,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Advertisement</title>
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#000;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;}
-#ad-frame{width:100%;max-width:600px;height:300px;background:#333;border-radius:10px;display:flex;justify-content:center;align-items:center;color:white;font-size:20px;}
-#countdown{font-size:24px;margin:10px;}
-#skip-btn{padding:8px 12px;border:none;border-radius:6px;background:#ff0000;color:white;cursor:pointer;font-weight:bold;}
-#skip-btn:hover{background:#e60000;}
+body{margin:0;font-family:Arial,sans-serif;background:#222;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;text-align:center}
+#skip-btn{margin-top:20px;padding:10px 20px;font-size:16px;border:none;border-radius:6px;background:#ff0000;color:white;cursor:pointer}
+#skip-btn:disabled{background:#555;cursor:not-allowed}
 </style>
 </head>
 <body>
-<div id="ad-frame">Ad is playing...</div>
-<p>Skip in <span id="countdown">5</span> seconds</p>
+<h2>Advertisement</h2>
+<p>Please wait <span id="countdown">5</span> seconds</p>
 <button id="skip-btn" disabled>Skip Ad</button>
+
 <script>
-let timeLeft = 5;
-const countdownEl = document.getElementById('countdown');
+const params = new URLSearchParams(window.location.search);
+const videoURL = params.get('url');
+const videoTitle = params.get('title');
+const videoDesc = params.get('desc');
+const adURL = params.get('ad');
+
 const skipBtn = document.getElementById('skip-btn');
+const countdownEl = document.getElementById('countdown');
+
+let timeLeft = 5;
 const interval = setInterval(()=>{
-    timeLeft -= 1;
+    timeLeft--;
     countdownEl.textContent = timeLeft;
     if(timeLeft <= 0){
         clearInterval(interval);
         skipBtn.disabled = false;
-        skipBtn.textContent = "Skip Ad";
     }
 },1000);
+
 skipBtn.addEventListener('click', ()=>{
-    const params = new URLSearchParams(window.location.search);
-    const url = params.get('url');
-    const title = params.get('title');
-    const desc = params.get('desc');
-    window.location.href = `play.html?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&desc=${encodeURIComponent(desc)}`;
+    location.href = `play.html?url=${encodeURIComponent(videoURL)}&title=${encodeURIComponent(videoTitle)}&desc=${encodeURIComponent(videoDesc)}`;
 });
+
+// Auto redirect after 5 seconds
+setTimeout(()=>{
+    location.href = `play.html?url=${encodeURIComponent(videoURL)}&title=${encodeURIComponent(videoTitle)}&desc=${encodeURIComponent(videoDesc)}`;
+}, 5000);
+
+// Optional: open ad link in background tab
+if(adURL) window.open(decodeURIComponent(adURL), "_blank");
 </script>
 </body>
 </html>
