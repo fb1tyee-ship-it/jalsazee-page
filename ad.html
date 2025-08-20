@@ -35,14 +35,14 @@ const interval = setInterval(()=>{
     }
 },1000);
 
-skipBtn.addEventListener('click', ()=>{
+skipBtn.addEventListener('click', ()=>{ goToVideo(); });
+
+function goToVideo(){
     location.href = `play.html?url=${encodeURIComponent(videoURL)}&title=${encodeURIComponent(videoTitle)}&desc=${encodeURIComponent(videoDesc)}`;
-});
+}
 
 // Auto redirect after 5 seconds
-setTimeout(()=>{
-    location.href = `play.html?url=${encodeURIComponent(videoURL)}&title=${encodeURIComponent(videoTitle)}&desc=${encodeURIComponent(videoDesc)}`;
-}, 5000);
+setTimeout(()=>{ goToVideo(); }, 5000);
 
 // Optional: open ad link in background tab
 if(adURL) window.open(decodeURIComponent(adURL), "_blank");
