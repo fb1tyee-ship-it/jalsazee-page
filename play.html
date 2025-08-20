@@ -41,17 +41,12 @@ window.onload = function(){
         titleEl.textContent = decodedTitle;
         descEl.textContent = decodedDesc;
 
-        // Mouse hover এ পূর্ণ টেক্সট tooltip দেখাবে
         titleEl.title = decodedTitle;
         descEl.title = decodedDesc;
 
         player.load(); 
         const playPromise = player.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.log('⚠️ Autoplay blocked. Click video to play manually.', error);
-            });
-        }
+        if(playPromise !== undefined){ playPromise.catch(error => { console.log('⚠️ Autoplay blocked.', error); }); }
     }
 };
 </script>
