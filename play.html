@@ -6,36 +6,14 @@
 <title>Video Player</title>
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;display:flex;flex-direction:column;align-items:center}
-header{
-    background:#ff0000;
-    color:white;
-    padding:12px;
-    text-align:center;
-    font-size:20px;
-    width:100%;
-    position:sticky;
-    top:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-header button{
-    position:absolute;
-    left:10px;
-    background:white;
-    color:#ff0000;
-    border:none;
-    padding:6px 12px;
-    font-size:14px;
-    border-radius:6px;
-    cursor:pointer;
-    font-weight:bold;
-}
+header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:20px;width:100%;position:sticky;top:0;display:flex;align-items:center;justify-content:center}
+header button{position:absolute;left:10px;background:white;color:#ff0000;border:none;padding:6px 12px;font-size:14px;border-radius:6px;cursor:pointer;font-weight:bold}
 header button:hover{background:#ffe5e5}
 .player-container{display:flex;flex-direction:column;max-width:600px;width:100%;padding:10px}
 video{width:100%;border-radius:10px}
 #video-title{font-size:14px; margin:5px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 #video-desc{font-size:12px; color:#555; margin:2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+#ad-container{width:100%;max-width:600px;text-align:center;margin:5px 0;font-size:14px;color:red;}
 </style>
 </head>
 <body>
@@ -45,40 +23,66 @@ video{width:100%;border-radius:10px}
 </header>
 <div class="player-container">
   <video id="video-player" controls></video>
+  <div id="ad-container"></div>
   <h3 id="video-title" title=""></h3>
   <p id="video-desc" title=""></p>
 </div>
+
+<script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
 <script>
-function goBack(){
-    window.location.href = "index.html";
-}
+function goBack(){ window.location.href = "index.html"; }
+
 window.onload = function(){
     const params = new URLSearchParams(window.location.search);
-    const url = params.get('url');
-    const title = params.get('title');
-    const desc = params.get('desc');
+    const videoUrl = decodeURIComponent(params.get('url') || '');
+    const title = decodeURIComponent(params.get('title') || '');
+    const desc = decodeURIComponent(params.get('desc') || '');
 
-    if(url){
-        const player = document.getElementById('video-player');
-        const decodedUrl = decodeURIComponent(url);
-        player.src = decodedUrl;
+    const vastAds = ['https://s.magsrv.com/v1/vast.php?idzone=5707142', 'https://s.magsrv.com/v1/vast.php?idzone=5707152', 'https://s.magsrv.com/v1/vast.php?idzone=5707156', 'https://s.magsrv.com/v1/vast.php?idzone=5707158', 'https://s.magsrv.com/v1/vast.php?idzone=5707162', 'https://s.magsrv.com/v1/vast.php?idzone=5707164', 'https://s.magsrv.com/v1/vast.php?idzone=5707166', 'https://s.magsrv.com/v1/vast.php?idzone=5707168', 'https://s.magsrv.com/v1/vast.php?idzone=5707170', 'https://s.magsrv.com/v1/vast.php?idzone=5707172', 'https://s.magsrv.com/v1/vast.php?idzone=5707174', 'https://s.magsrv.com/v1/vast.php?idzone=5707176', 'https://s.magsrv.com/v1/vast.php?idzone=5707178', 'https://s.magsrv.com/v1/vast.php?idzone=5707180', 'https://s.magsrv.com/v1/vast.php?idzone=5707182', 'https://s.magsrv.com/v1/vast.php?idzone=5707184', 'https://s.magsrv.com/v1/vast.php?idzone=5707186', 'https://s.magsrv.com/v1/vast.php?idzone=5707188'];
 
-        const titleEl = document.getElementById('video-title');
-        const descEl = document.getElementById('video-desc');
+    const player = document.getElementById('video-player');
+    const adContainer = document.getElementById('ad-container');
 
-        const decodedTitle = decodeURIComponent(title || '');
-        const decodedDesc = decodeURIComponent(desc || '');
+    document.getElementById('video-title').textContent = title;
+    document.getElementById('video-desc').textContent = desc;
+    document.getElementById('video-title').title = title;
+    document.getElementById('video-desc').title = desc;
 
-        titleEl.textContent = decodedTitle;
-        descEl.textContent = decodedDesc;
+    player.src = videoUrl;
+    player.play().catch(err=>console.log("⚠️ Autoplay blocked", err));
 
-        titleEl.title = decodedTitle;
-        descEl.title = decodedDesc;
+    // 1 মিনিট পর ad play
+    setTimeout(()=>{
+        const currentTime = player.currentTime;
+        const randomIndex = Math.floor(Math.random() * vastAds.length);
+        const adTagUrl = vastAds[randomIndex];
 
-        player.load(); 
-        const playPromise = player.play();
-        if(playPromise !== undefined){ playPromise.catch(error => { console.log('⚠️ Autoplay blocked.', error); }); }
-    }
+        // HTML5 video pre-roll using IMA SDK
+        adContainer.textContent = "⚠️ Ad playing...";
+
+        const adDisplayContainer = new google.ima.AdDisplayContainer(adContainer, player);
+        const adsLoader = new google.ima.AdsLoader(adDisplayContainer);
+        const adsRequest = new google.ima.AdsRequest();
+        adsRequest.adTagUrl = adTagUrl;
+        adsRequest.linearAdSlotWidth = player.clientWidth;
+        adsRequest.linearAdSlotHeight = 360;
+        adsRequest.nonLinearAdSlotWidth = player.clientWidth;
+        adsRequest.nonLinearAdSlotHeight = 100;
+
+        adsLoader.addEventListener(
+            google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED,
+            function(adsManagerLoadedEvent){
+                const adsManager = adsManagerLoadedEvent.getAdsManager(player);
+                adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_PAUSE_REQUESTED,()=>player.pause());
+                adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_RESUME_REQUESTED,()=>player.currentTime = currentTime);
+                adsManager.init(player.clientWidth, 360, google.ima.ViewMode.NORMAL);
+                adsManager.start();
+            },
+            false
+        );
+
+        adsLoader.requestAds(adsRequest);
+    }, 60000); // 60000ms = 1 minute
 };
 </script>
 </body>
