@@ -92,8 +92,14 @@ window.onload = function(){
                         timer: 60,   // 1 মিনিট পরে অ্যাড
                         adText: 'Advertisement - Please wait',
                         adTextPosition: 'top left',
-                        skipButtonCaption: '', // Skip Disabled
-                        skipButtonPosition: 'bottom right'
+                        skipButtonCaption: 'Skip Ad', 
+                        skipButtonPosition: 'bottom right',
+                        onAdComplete: function(){
+                            console.log("✅ Ad Finished, continuing main video");
+                        },
+                        onAdSkip: function(){
+                            console.log("⚠️ Ad skipped, continuing main video");
+                        }
                     }
                 ]
             }
