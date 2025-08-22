@@ -39,13 +39,14 @@ videoContent.src = url;
 // --- VAST Ads List ---
 const vastAds = ["https://s.magsrv.com/v1/vast.php?idzone=5707142", "https://s.magsrv.com/v1/vast.php?idzone=5707152", "https://s.magsrv.com/v1/vast.php?idzone=5707156", "https://s.magsrv.com/v1/vast.php?idzone=5707158", "https://s.magsrv.com/v1/vast.php?idzone=5707162", "https://s.magsrv.com/v1/vast.php?idzone=5707164", "https://s.magsrv.com/v1/vast.php?idzone=5707166", "https://s.magsrv.com/v1/vast.php?idzone=5707168", "https://s.magsrv.com/v1/vast.php?idzone=5707170", "https://s.magsrv.com/v1/vast.php?idzone=5707172", "https://s.magsrv.com/v1/vast.php?idzone=5707174", "https://s.magsrv.com/v1/vast.php?idzone=5707176", "https://s.magsrv.com/v1/vast.php?idzone=5707178", "https://s.magsrv.com/v1/vast.php?idzone=5707180", "https://s.magsrv.com/v1/vast.php?idzone=5707182", "https://s.magsrv.com/v1/vast.php?idzone=5707184", "https://s.magsrv.com/v1/vast.php?idzone=5707186", "https://s.magsrv.com/v1/vast.php?idzone=5707188"];
 
-// প্রতিবার নতুন random ad নিতে timestamp মিশিয়ে দিচ্ছি
-function getRandomAd() {
-   const ad = vastAds[Math.floor(Math.random() * vastAds.length)];
-   return ad + "&t=" + Date.now(); // Unique param add করলাম
+// প্রতিবার একেবারে unique random ad link বানানো
+function getUniqueAd() {
+   const base = vastAds[Math.floor(Math.random() * vastAds.length)];
+   const unique = "&r=" + Math.random().toString(36).substring(2) + Date.now();
+   return base + unique;
 }
 
-const adTagUrl = getRandomAd();
+const adTagUrl = getUniqueAd();
 
 // --- IMA SDK Setup ---
 const adContainer = document.getElementById('adContainer');
