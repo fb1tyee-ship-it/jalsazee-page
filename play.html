@@ -78,32 +78,37 @@ window.onload = function(){
         titleEl.title = decodedTitle;
         descEl.title = decodedDesc;
 
-        player.load(); 
-        const playPromise = player.play();
-        if(playPromise !== undefined){ playPromise.catch(error => { console.log('⚠️ Autoplay blocked.', error); }); }
+        player.load();
 
-        // Fluid Player Mid-roll 1 মিনিট পর Ad
-        var fluid = fluidPlayer('video-player', {
-            vastOptions: {
-                adList: [
-                    {
-                        roll: 'midRoll',
-                        vastTag: 'https://s.magsrv.com/v1/vast.php?idzone=5707142',
-                        timer: 60,   // 1 মিনিট পরে অ্যাড
-                        adText: 'Advertisement - Please wait',
-                        adTextPosition: 'top left',
-                        skipButtonCaption: 'Skip Ad', 
-                        skipButtonPosition: 'bottom right',
-                        onAdComplete: function(){
-                            console.log("✅ Ad Finished, continuing main video");
-                        },
-                        onAdSkip: function(){
-                            console.log("⚠️ Ad skipped, continuing main video");
+        // Fluid Player Mid-roll after 1 min
+        player.addEventListener('loadedmetadata', function() {
+            var fluid = fluidPlayer('video-player', {
+                vastOptions: {
+                    adList: [
+                        {
+                            roll: 'midRoll',
+                            vastTag: 'https://s.magsrv.com/v1/vast.php?idzone=5707142',
+                            timer: 60, // 1 minute after video starts
+                            adText: 'Advertisement - Please wait',
+                            adTextPosition: 'top left',
+                            skipButtonCaption: 'Skip Ad',
+                            skipButtonPosition: 'bottom right',
+                            onAdComplete: function(){ console.log("✅ Ad finished, continuing main video"); },
+                            onAdSkip: function(){ console.log("⚠️ Ad skipped, continuing main video"); }
                         }
-                    }
-                ]
-            }
+                    ]
+                }
+            });
         });
+
+        // Play video with user interaction to bypass autoplay block
+        const playPromise = player.play();
+        if(playPromise !== undefined){
+            playPromise.catch(error => { 
+                console.log('⚠️ Autoplay blocked. Waiting for user interaction.');
+                player.addEventListener('click', function(){ player.play(); }, { once: true });
+            });
+        }
     }
 };
 </script>
