@@ -48,20 +48,22 @@ window.onload = function(){
     document.getElementById('video-title').title = title;
     document.getElementById('video-desc').title = desc;
 
+    let mainVideoTime = 0;
+
     player.src = videoUrl;
     player.play().catch(err=>console.log("⚠️ Autoplay blocked", err));
 
-    // 1 মিনিট পর ad play
-    setTimeout(()=>{
-        const currentTime = player.currentTime;
+    setTimeout(function(){
+        mainVideoTime = player.currentTime;
         const randomIndex = Math.floor(Math.random() * vastAds.length);
         const adTagUrl = vastAds[randomIndex];
 
-        // HTML5 video pre-roll using IMA SDK
         adContainer.textContent = "⚠️ Ad playing...";
 
         const adDisplayContainer = new google.ima.AdDisplayContainer(adContainer, player);
+        adDisplayContainer.initialize();
         const adsLoader = new google.ima.AdsLoader(adDisplayContainer);
+
         const adsRequest = new google.ima.AdsRequest();
         adsRequest.adTagUrl = adTagUrl;
         adsRequest.linearAdSlotWidth = player.clientWidth;
@@ -74,7 +76,11 @@ window.onload = function(){
             function(adsManagerLoadedEvent){
                 const adsManager = adsManagerLoadedEvent.getAdsManager(player);
                 adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_PAUSE_REQUESTED,()=>player.pause());
-                adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_RESUME_REQUESTED,()=>player.currentTime = currentTime);
+                adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_RESUME_REQUESTED,()=>{
+                    player.currentTime = mainVideoTime;
+                    player.play();
+                    adContainer.textContent = "";
+                });
                 adsManager.init(player.clientWidth, 360, google.ima.ViewMode.NORMAL);
                 adsManager.start();
             },
@@ -82,7 +88,7 @@ window.onload = function(){
         );
 
         adsLoader.requestAds(adsRequest);
-    }, 60000); // 60000ms = 1 minute
+    }, 60000);
 };
 </script>
 </body>
