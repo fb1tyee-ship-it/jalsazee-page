@@ -80,7 +80,7 @@ window.onload = function(){
 
         player.load();
 
-        // Fluid Player Mid-roll after 1 min
+        // Attach Fluid Player mid-roll after video metadata loaded
         player.addEventListener('loadedmetadata', function() {
             var fluid = fluidPlayer('video-player', {
                 vastOptions: {
@@ -101,7 +101,7 @@ window.onload = function(){
             });
         });
 
-        // Play video with user interaction to bypass autoplay block
+        // Play video, handle autoplay restrictions
         const playPromise = player.play();
         if(playPromise !== undefined){
             playPromise.catch(error => { 
