@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Video Player</title>
-<link rel="stylesheet" href="https://cdn.fluidplayer.com/v3/current/fluidplayer.min.css">
-<script src="https://cdn.fluidplayer.com/v3/current/fluidplayer.min.js"></script>
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;display:flex;flex-direction:column;align-items:center}
 header{
@@ -50,94 +48,34 @@ video{width:100%;border-radius:10px}
   <h3 id="video-title" title=""></h3>
   <p id="video-desc" title=""></p>
 </div>
-
 <script>
-function goBack(){ window.location.href = "index.html"; }
-
-const vastTags = [
-    "https://s.magsrv.com/v1/vast.php?idzone=5707142",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707152",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707156",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707158",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707162",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707164",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707166",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707168",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707170",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707172",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707174",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707176",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707178",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707180",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707182",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707184",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707186",
-    "https://s.magsrv.com/v1/vast.php?idzone=5707188"
-];
-
+function goBack(){
+    window.location.href = "index.html";
+}
 window.onload = function(){
     const params = new URLSearchParams(window.location.search);
     const url = params.get('url');
     const title = params.get('title');
     const desc = params.get('desc');
-    const idx = parseInt(params.get('idx')) || 0;
 
     if(url){
         const player = document.getElementById('video-player');
         player.src = decodeURIComponent(url);
-        document.getElementById('video-title').textContent = decodeURIComponent(title || '');
-        document.getElementById('video-desc').textContent = decodeURIComponent(desc || '');
-        document.getElementById('video-title').title = decodeURIComponent(title || '');
-        document.getElementById('video-desc').title = decodeURIComponent(desc || '');
-        player.load();
 
-        // ১ মিনিট পরে mid-roll ads
-        player.addEventListener('loadedmetadata', function() {
-            const mainTime = 60; // 1 minute
-            const vastTag = vastTags[idx] || vastTags[0];
-            let adPlayed = false;
+        const titleEl = document.getElementById('video-title');
+        const descEl = document.getElementById('video-desc');
 
-            const checkTime = setInterval(()=>{
-                if(player.currentTime >= mainTime && !adPlayed){
-                    adPlayed = true;
-                    player.pause(); // pause main video
-                    const fluid = fluidPlayer('video-player', {
-                        vastOptions: {
-                            adList: [{
-                                roll: 'midRoll',
-                                vastTag: vastTag,
-                                timer: 0,
-                                adText: 'Advertisement - Please wait',
-                                adTextPosition: 'top left',
-                                skipButtonCaption: 'Skip Ad',
-                                skipButtonPosition: 'bottom right',
-                                onAdComplete: function(){ 
-                                    console.log("✅ Ad finished, resuming main video");
-                                    player.play();
-                                },
-                                onAdSkip: function(){ 
-                                    console.log("⚠️ Ad skipped, resuming main video");
-                                    player.play();
-                                }
-                            }]
-                        }
-                    });
-                    clearInterval(checkTime);
-                    fluid.play();
-                }
-            }, 1000);
-        });
+        titleEl.textContent = decodeURIComponent(title || '');
+        descEl.textContent = decodeURIComponent(desc || '');
 
-        // autoplay safeguard
+        titleEl.title = decodeURIComponent(title || '');
+        descEl.title = decodeURIComponent(desc || '');
+
+        player.load(); 
         const playPromise = player.play();
-        if(playPromise !== undefined){
-            playPromise.catch(error => {
-                player.addEventListener('click', function(){ player.play(); }, { once: true });
-            });
-        }
+        if(playPromise !== undefined){ playPromise.catch(error => { console.log('⚠️ Autoplay blocked.', error); }); }
     }
 };
 </script>
-
 </body>
 </html>
