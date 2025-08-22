@@ -52,8 +52,11 @@ window.onload = function(){
     player.src = videoUrl;
     player.play().catch(err=>console.log("⚠️ Autoplay blocked", err));
 
+    // 1 minute delay for ad
     setTimeout(function(){
         mainVideoTime = player.currentTime;
+        player.pause();
+
         const randomIndex = Math.floor(Math.random() * vastAds.length);
         const adTagUrl = vastAds[randomIndex];
 
@@ -79,9 +82,9 @@ window.onload = function(){
                     player.pause();
                 });
                 adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_RESUME_REQUESTED, ()=> {
+                    adContainer.style.display = "none";
                     player.currentTime = mainVideoTime;
                     player.play();
-                    adContainer.style.display = "none";
                 });
                 adsManager.init(player.clientWidth, player.clientHeight, google.ima.ViewMode.NORMAL);
                 adsManager.start();
@@ -90,7 +93,7 @@ window.onload = function(){
         );
 
         adsLoader.requestAds(adsRequest);
-    }, 60000); // 1 minute delay
+    }, 60000);
 };
 </script>
 </body>
