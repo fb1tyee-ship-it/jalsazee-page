@@ -9,9 +9,8 @@ body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;display:flex;flex-
 header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:20px;width:100%;position:sticky;top:0;display:flex;align-items:center;justify-content:center}
 header button{position:absolute;left:10px;background:white;color:#ff0000;border:none;padding:6px 12px;font-size:14px;border-radius:6px;cursor:pointer;font-weight:bold}
 header button:hover{background:#ffe5e5}
-.player-container{display:flex;flex-direction:column;max-width:600px;width:100%;padding:10px;position:relative}
+.player-container{display:flex;flex-direction:column;max-width:600px;width:100%;padding:10px}
 video{width:100%;border-radius:10px}
-#ad-container{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);color:white;font-size:20px;z-index:2;pointer-events:none}
 #video-title{font-size:14px; margin:5px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 #video-desc{font-size:12px; color:#555; margin:2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 </style>
@@ -23,12 +22,10 @@ video{width:100%;border-radius:10px}
 </header>
 <div class="player-container">
   <video id="video-player" controls></video>
-  <div id="ad-container"></div>
   <h3 id="video-title" title=""></h3>
   <p id="video-desc" title=""></p>
 </div>
 
-<script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
 <script>
 function goBack(){ window.location.href = "index.html"; }
 
@@ -40,60 +37,39 @@ window.onload = function(){
     const vastAds = ['https://s.magsrv.com/v1/vast.php?idzone=5707142', 'https://s.magsrv.com/v1/vast.php?idzone=5707152', 'https://s.magsrv.com/v1/vast.php?idzone=5707156', 'https://s.magsrv.com/v1/vast.php?idzone=5707158', 'https://s.magsrv.com/v1/vast.php?idzone=5707162', 'https://s.magsrv.com/v1/vast.php?idzone=5707164', 'https://s.magsrv.com/v1/vast.php?idzone=5707166', 'https://s.magsrv.com/v1/vast.php?idzone=5707168', 'https://s.magsrv.com/v1/vast.php?idzone=5707170', 'https://s.magsrv.com/v1/vast.php?idzone=5707172', 'https://s.magsrv.com/v1/vast.php?idzone=5707174', 'https://s.magsrv.com/v1/vast.php?idzone=5707176', 'https://s.magsrv.com/v1/vast.php?idzone=5707178', 'https://s.magsrv.com/v1/vast.php?idzone=5707180', 'https://s.magsrv.com/v1/vast.php?idzone=5707182', 'https://s.magsrv.com/v1/vast.php?idzone=5707184', 'https://s.magsrv.com/v1/vast.php?idzone=5707186', 'https://s.magsrv.com/v1/vast.php?idzone=5707188'];
 
     const player = document.getElementById('video-player');
-    const adContainer = document.getElementById('ad-container');
+    const videoTitle = document.getElementById('video-title');
+    const videoDesc = document.getElementById('video-desc');
 
-    document.getElementById('video-title').textContent = title;
-    document.getElementById('video-desc').textContent = desc;
-    document.getElementById('video-title').title = title;
-    document.getElementById('video-desc').title = desc;
+    videoTitle.textContent = title;
+    videoDesc.textContent = desc;
+    videoTitle.title = title;
+    videoDesc.title = desc;
 
+    let mainVideoSrc = videoUrl;
     let mainVideoTime = 0;
 
-    player.src = videoUrl;
-    player.play().catch(err=>console.log("⚠️ Autoplay blocked", err));
+    // play original video
+    player.src = mainVideoSrc;
+    player.play().catch(err => console.log("⚠️ Autoplay blocked", err));
 
     // 1 minute delay for ad
-    setTimeout(function(){
+    setTimeout(() => {
         mainVideoTime = player.currentTime;
         player.pause();
 
-        const randomIndex = Math.floor(Math.random() * vastAds.length);
-        const adTagUrl = vastAds[randomIndex];
+        // pick random ad
+        const randomAd = vastAds[Math.floor(Math.random() * vastAds.length)];
+        player.src = randomAd;
+        player.currentTime = 0;
+        player.play();
 
-        adContainer.textContent = "⚠️ Ad playing...";
-        adContainer.style.display = "flex";
-
-        const adDisplayContainer = new google.ima.AdDisplayContainer(adContainer, player);
-        adDisplayContainer.initialize();
-        const adsLoader = new google.ima.AdsLoader(adDisplayContainer);
-
-        const adsRequest = new google.ima.AdsRequest();
-        adsRequest.adTagUrl = adTagUrl;
-        adsRequest.linearAdSlotWidth = player.clientWidth;
-        adsRequest.linearAdSlotHeight = player.clientHeight;
-        adsRequest.nonLinearAdSlotWidth = player.clientWidth;
-        adsRequest.nonLinearAdSlotHeight = 100;
-
-        adsLoader.addEventListener(
-            google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED,
-            function(adsManagerLoadedEvent){
-                const adsManager = adsManagerLoadedEvent.getAdsManager(player);
-                adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_PAUSE_REQUESTED, ()=> {
-                    player.pause();
-                });
-                adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_RESUME_REQUESTED, ()=> {
-                    adContainer.style.display = "none";
-                    player.currentTime = mainVideoTime;
-                    player.play();
-                });
-                adsManager.init(player.clientWidth, player.clientHeight, google.ima.ViewMode.NORMAL);
-                adsManager.start();
-            },
-            false
-        );
-
-        adsLoader.requestAds(adsRequest);
-    }, 60000);
+        // when ad ends, resume original video
+        player.onended = () => {
+            player.src = mainVideoSrc;
+            player.currentTime = mainVideoTime;
+            player.play();
+        };
+    }, 60000); // 60,000 ms = 1 minute
 };
 </script>
 </body>
