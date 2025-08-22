@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Video Player</title>
+<link rel="stylesheet" href="https://cdn.fluidplayer.com/v3/current/fluidplayer.min.css">
+<script src="https://cdn.fluidplayer.com/v3/current/fluidplayer.min.js"></script>
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;display:flex;flex-direction:column;align-items:center}
 header{
@@ -52,6 +54,7 @@ video{width:100%;border-radius:10px}
 function goBack(){
     window.location.href = "index.html";
 }
+
 window.onload = function(){
     const params = new URLSearchParams(window.location.search);
     const url = params.get('url');
@@ -78,6 +81,23 @@ window.onload = function(){
         player.load(); 
         const playPromise = player.play();
         if(playPromise !== undefined){ playPromise.catch(error => { console.log('⚠️ Autoplay blocked.', error); }); }
+
+        // Fluid Player Mid-roll 1 মিনিট পর Ad
+        var fluid = fluidPlayer('video-player', {
+            vastOptions: {
+                adList: [
+                    {
+                        roll: 'midRoll',
+                        vastTag: 'https://s.magsrv.com/v1/vast.php?idzone=5707142',
+                        timer: 60,   // 1 মিনিট পরে অ্যাড
+                        adText: 'Advertisement - Please wait',
+                        adTextPosition: 'top left',
+                        skipButtonCaption: '', // Skip Disabled
+                        skipButtonPosition: 'bottom right'
+                    }
+                ]
+            }
+        });
     }
 };
 </script>
