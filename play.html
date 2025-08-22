@@ -27,54 +27,46 @@ video{width:100%;border-radius:10px}
 </div>
 <script>
 const ads = ["https://s.magsrv.com/v1/vast.php?idzone=5707142", "https://s.magsrv.com/v1/vast.php?idzone=5707152", "https://s.magsrv.com/v1/vast.php?idzone=5707156", "https://s.magsrv.com/v1/vast.php?idzone=5707158", "https://s.magsrv.com/v1/vast.php?idzone=5707162", "https://s.magsrv.com/v1/vast.php?idzone=5707164", "https://s.magsrv.com/v1/vast.php?idzone=5707166", "https://s.magsrv.com/v1/vast.php?idzone=5707168", "https://s.magsrv.com/v1/vast.php?idzone=5707170", "https://s.magsrv.com/v1/vast.php?idzone=5707172", "https://s.magsrv.com/v1/vast.php?idzone=5707174", "https://s.magsrv.com/v1/vast.php?idzone=5707176", "https://s.magsrv.com/v1/vast.php?idzone=5707178", "https://s.magsrv.com/v1/vast.php?idzone=5707180", "https://s.magsrv.com/v1/vast.php?idzone=5707182", "https://s.magsrv.com/v1/vast.php?idzone=5707184", "https://s.magsrv.com/v1/vast.php?idzone=5707186", "https://s.magsrv.com/v1/vast.php?idzone=5707188"];
-function goBack(){ window.location.href = "index.html"; }
+function goBack(){ window.location.href="index.html"; }
+
 window.onload = function(){
     const params = new URLSearchParams(window.location.search);
-    const url = params.get('url');
-    const title = params.get('title');
-    const desc = params.get('desc');
-
-    if(url){
-        const player = document.getElementById('main-video');
-        const decodedUrl = decodeURIComponent(url);
-        player.src = decodedUrl;
-
-        const titleEl = document.getElementById('video-title');
-        const descEl = document.getElementById('video-desc');
-
-        const decodedTitle = decodeURIComponent(title || '');
-        const decodedDesc = decodeURIComponent(desc || '');
-
-        titleEl.textContent = decodedTitle;
-        descEl.textContent = decodedDesc;
-
-        titleEl.title = decodedTitle;
-        descEl.title = decodedDesc;
-
-        player.load(); 
-        player.play().catch(e=>console.log('⚠️ Autoplay blocked', e));
-
-        let adPlayed = false;
-        player.addEventListener('timeupdate', () => {
-            if(!adPlayed && player.currentTime >= 60){
-                adPlayed = true;
-                const currentTime = player.currentTime;
-                player.pause();
-                const adUrl = ads[Math.floor(Math.random() * ads.length)];
-                const adVideo = document.createElement('video');
-                adVideo.src = adUrl;
-                adVideo.width = 640;
-                adVideo.controls = false;
-                document.body.appendChild(adVideo);
-                adVideo.play();
-                adVideo.addEventListener('ended', () => {
-                    adVideo.remove();
-                    player.currentTime = currentTime;
-                    player.play();
-                });
-            }
-        });
-    }
+    const url = decodeURIComponent(params.get('url') || '');
+    const title = decodeURIComponent(params.get('title') || '');
+    const desc = decodeURIComponent(params.get('desc') || '');
+    if(!url) return;
+    const player = document.getElementById('main-video');
+    const titleEl = document.getElementById('video-title');
+    const descEl = document.getElementById('video-desc');
+    titleEl.textContent = title;
+    descEl.textContent = desc;
+    titleEl.title = title;
+    descEl.title = desc;
+    player.src = url;
+    player.load();
+    player.play().catch(e=>console.log('⚠️ Autoplay blocked', e));
+    let adPlayed = false;
+    player.addEventListener('timeupdate', ()=>{
+        if(!adPlayed && player.currentTime>=60){
+            adPlayed = true;
+            const adUrl = ads[Math.floor(Math.random()*ads.length)];
+            const currentTime = player.currentTime;
+            player.pause();
+            const adVideo = document.createElement('video');
+            adVideo.src = adUrl;
+            adVideo.controls = false;
+            adVideo.autoplay = true;
+            adVideo.style.width = "100%";
+            adVideo.style.borderRadius = "10px";
+            const container = document.querySelector(".player-container");
+            container.insertBefore(adVideo, player.nextSibling);
+            adVideo.addEventListener('ended', ()=>{
+                adVideo.remove();
+                player.currentTime = currentTime;
+                player.play();
+            });
+        }
+    });
 };
 </script>
 </body>
