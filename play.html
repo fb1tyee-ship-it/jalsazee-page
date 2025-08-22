@@ -11,7 +11,7 @@ header button{position:absolute;left:10px;background:white;color:#ff0000;border:
 header button:hover{background:#ffe5e5}
 .player-container{display:flex;flex-direction:column;max-width:600px;width:100%;padding:10px;position:relative}
 video{width:100%;border-radius:10px}
-#ad-container{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);color:white;font-size:20px;z-index:2;pointer-events:none}
+#ad-container{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);color:white;font-size:20px;z-index:2;pointer-events:none}
 #video-title{font-size:14px; margin:5px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 #video-desc{font-size:12px; color:#555; margin:2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 </style>
@@ -90,7 +90,7 @@ window.onload = function(){
         );
 
         adsLoader.requestAds(adsRequest);
-    }, 60000);
+    }, 60000); // 1 minute delay
 };
 </script>
 </body>
