@@ -20,7 +20,7 @@ video{width:100%;border-radius:10px}
 <body>
 <header>Shajazada Bhai Videos</header>
 
-<!-- Outstream Banner above video player -->
+<!-- Outstream Banner Ad -->
 <div class="ad-outstream">
 <script async type="application/javascript" src="https://a.magsrv.com/ad-provider.js"></script>
 <ins class="eas6a97888e37" data-zoneid="5707436"></ins>
@@ -39,17 +39,21 @@ const params = new URLSearchParams(window.location.search);
 const url = decodeURIComponent(params.get('url') || '');
 const title = decodeURIComponent(params.get('title') || '');
 const desc = decodeURIComponent(params.get('desc') || '');
+
 document.getElementById("video-title").textContent = title;
 document.getElementById("video-desc").textContent = desc;
+
 const videoContent = document.getElementById('contentElement');
 videoContent.src = url;
 
 const vastAds = ["https://s.magsrv.com/v1/vast.php?idzone=5707142", "https://s.magsrv.com/v1/vast.php?idzone=5707152", "https://s.magsrv.com/v1/vast.php?idzone=5707156", "https://s.magsrv.com/v1/vast.php?idzone=5707158", "https://s.magsrv.com/v1/vast.php?idzone=5707162", "https://s.magsrv.com/v1/vast.php?idzone=5707164", "https://s.magsrv.com/v1/vast.php?idzone=5707166", "https://s.magsrv.com/v1/vast.php?idzone=5707168", "https://s.magsrv.com/v1/vast.php?idzone=5707170", "https://s.magsrv.com/v1/vast.php?idzone=5707172", "https://s.magsrv.com/v1/vast.php?idzone=5707174", "https://s.magsrv.com/v1/vast.php?idzone=5707176", "https://s.magsrv.com/v1/vast.php?idzone=5707178", "https://s.magsrv.com/v1/vast.php?idzone=5707180", "https://s.magsrv.com/v1/vast.php?idzone=5707182", "https://s.magsrv.com/v1/vast.php?idzone=5707184", "https://s.magsrv.com/v1/vast.php?idzone=5707186", "https://s.magsrv.com/v1/vast.php?idzone=5707188"];
+
 function getUniqueAd() {
    const base = vastAds[Math.floor(Math.random() * vastAds.length)];
    const unique = "&r=" + Math.random().toString(36).substring(2) + Date.now();
    return base + unique;
 }
+
 const adTagUrl = getUniqueAd();
 
 const adContainer = document.getElementById('adContainer');
