@@ -3,15 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Player with VAST Ads</title>
-<link href="https://vjs.zencdn.net/7.24.0/video-js.css" rel="stylesheet" />
+<title>Video Player</title>
+<link rel="stylesheet" href="https://cdn.fluidplayer.com/v3/current/fluidplayer.min.css">
+<script src="https://cdn.fluidplayer.com/v3/current/fluidplayer.min.js"></script>
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;display:flex;flex-direction:column;align-items:center}
-header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:20px;width:100%;position:sticky;top:0;display:flex;align-items:center;justify-content:center}
-header button{position:absolute;left:10px;background:white;color:#ff0000;border:none;padding:6px 12px;font-size:14px;border-radius:6px;cursor:pointer;font-weight:bold}
+header{
+    background:#ff0000;
+    color:white;
+    padding:12px;
+    text-align:center;
+    font-size:20px;
+    width:100%;
+    position:sticky;
+    top:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+header button{
+    position:absolute;
+    left:10px;
+    background:white;
+    color:#ff0000;
+    border:none;
+    padding:6px 12px;
+    font-size:14px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+}
 header button:hover{background:#ffe5e5}
 .player-container{display:flex;flex-direction:column;max-width:600px;width:100%;padding:10px}
-.video-js{width:100%;height:auto}
+video{width:100%;border-radius:10px}
 #video-title{font-size:14px; margin:5px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 #video-desc{font-size:12px; color:#555; margin:2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 </style>
@@ -22,70 +46,65 @@ header button:hover{background:#ffe5e5}
   <span>Shajazada Bhai Videos</span>
 </header>
 <div class="player-container">
-  <video
-      id="video-player"
-      class="video-js vjs-default-skin"
-      controls
-      preload="auto"
-      width="600"
-      height="340"
-      data-setup='{}'>
-  </video>
+  <video id="video-player" controls></video>
   <h3 id="video-title" title=""></h3>
   <p id="video-desc" title=""></p>
 </div>
-
-<script src="https://vjs.zencdn.net/7.24.0/video.min.js"></script>
-<script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/videojs-contrib-ads@6.9.0/dist/videojs-contrib-ads.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/videojs-ima@1.9.0/dist/videojs.ima.min.js"></script>
-
 <script>
-function goBack(){ window.location.href = "index.html"; }
+function goBack(){
+    window.location.href = "index.html";
+}
 
 window.onload = function(){
     const params = new URLSearchParams(window.location.search);
-    const videoUrl = decodeURIComponent(params.get('url') || '');
-    const title = decodeURIComponent(params.get('title') || '');
-    const desc = decodeURIComponent(params.get('desc') || '');
-    const vastAds = ['https://s.magsrv.com/v1/vast.php?idzone=5707142', 'https://s.magsrv.com/v1/vast.php?idzone=5707152', 'https://s.magsrv.com/v1/vast.php?idzone=5707156', 'https://s.magsrv.com/v1/vast.php?idzone=5707158', 'https://s.magsrv.com/v1/vast.php?idzone=5707162', 'https://s.magsrv.com/v1/vast.php?idzone=5707164', 'https://s.magsrv.com/v1/vast.php?idzone=5707166', 'https://s.magsrv.com/v1/vast.php?idzone=5707168', 'https://s.magsrv.com/v1/vast.php?idzone=5707170', 'https://s.magsrv.com/v1/vast.php?idzone=5707172', 'https://s.magsrv.com/v1/vast.php?idzone=5707174', 'https://s.magsrv.com/v1/vast.php?idzone=5707176', 'https://s.magsrv.com/v1/vast.php?idzone=5707178', 'https://s.magsrv.com/v1/vast.php?idzone=5707180', 'https://s.magsrv.com/v1/vast.php?idzone=5707182', 'https://s.magsrv.com/v1/vast.php?idzone=5707184', 'https://s.magsrv.com/v1/vast.php?idzone=5707186', 'https://s.magsrv.com/v1/vast.php?idzone=5707188'];
+    const url = params.get('url');
+    const title = params.get('title');
+    const desc = params.get('desc');
 
-    const player = videojs('video-player');
-    const videoTitle = document.getElementById('video-title');
-    const videoDesc = document.getElementById('video-desc');
+    if(url){
+        const player = document.getElementById('video-player');
+        const decodedUrl = decodeURIComponent(url);
+        player.src = decodedUrl;
 
-    videoTitle.textContent = title;
-    videoDesc.textContent = desc;
-    videoTitle.title = title;
-    videoDesc.title = desc;
+        const titleEl = document.getElementById('video-title');
+        const descEl = document.getElementById('video-desc');
 
-    let mainVideoSrc = videoUrl;
-    let mainVideoTime = 0;
+        const decodedTitle = decodeURIComponent(title || '');
+        const decodedDesc = decodeURIComponent(desc || '');
 
-    player.ready(() => {
-        player.src({ type: "video/mp4", src: mainVideoSrc });
-        player.play().catch(err => console.log("⚠️ Autoplay blocked", err));
+        titleEl.textContent = decodedTitle;
+        descEl.textContent = decodedDesc;
 
-        setTimeout(() => {
-            mainVideoTime = player.currentTime();
-            player.pause();
+        titleEl.title = decodedTitle;
+        descEl.title = decodedDesc;
 
-            const randomAd = vastAds[Math.floor(Math.random() * vastAds.length)];
+        player.load(); 
+        const playPromise = player.play();
+        if(playPromise !== undefined){ playPromise.catch(error => { console.log('⚠️ Autoplay blocked.', error); }); }
 
-            player.ima({ adTagUrl: randomAd, debug: false });
-            player.ima.requestAds();
-
-            player.one('adsready', () => {
-                player.ima.playAd();
-            });
-
-            player.one('adend', () => {
-                player.src({ type: "video/mp4", src: mainVideoSrc });
-                player.currentTime(mainVideoTime);
-                player.play();
-            });
-        }, 60000); // 60s
-    });
+        // Fluid Player Mid-roll 1 মিনিট পর Ad
+        var fluid = fluidPlayer('video-player', {
+            vastOptions: {
+                adList: [
+                    {
+                        roll: 'midRoll',
+                        vastTag: 'https://s.magsrv.com/v1/vast.php?idzone=5707142',
+                        timer: 60,   // 1 মিনিট পরে অ্যাড
+                        adText: 'Advertisement - Please wait',
+                        adTextPosition: 'top left',
+                        skipButtonCaption: 'Skip Ad', 
+                        skipButtonPosition: 'bottom right',
+                        onAdComplete: function(){
+                            console.log("✅ Ad Finished, continuing main video");
+                        },
+                        onAdSkip: function(){
+                            console.log("⚠️ Ad skipped, continuing main video");
+                        }
+                    }
+                ]
+            }
+        });
+    }
 };
 </script>
 </body>
