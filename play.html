@@ -17,7 +17,7 @@ video{width:100%;border-radius:10px}
 </head>
 <body>
 <header>
-  <button onclick="goBack()">⬅ Back</button>
+  <button onclick="window.location.href='index.html'">⬅ Back</button>
   <span>Shajazada Bhai Videos</span>
 </header>
 <div class="player-container">
@@ -26,47 +26,32 @@ video{width:100%;border-radius:10px}
   <p id="video-desc" title=""></p>
 </div>
 <script>
-const ads = ["https://s.magsrv.com/v1/vast.php?idzone=5707142", "https://s.magsrv.com/v1/vast.php?idzone=5707152", "https://s.magsrv.com/v1/vast.php?idzone=5707156", "https://s.magsrv.com/v1/vast.php?idzone=5707158", "https://s.magsrv.com/v1/vast.php?idzone=5707162", "https://s.magsrv.com/v1/vast.php?idzone=5707164", "https://s.magsrv.com/v1/vast.php?idzone=5707166", "https://s.magsrv.com/v1/vast.php?idzone=5707168", "https://s.magsrv.com/v1/vast.php?idzone=5707170", "https://s.magsrv.com/v1/vast.php?idzone=5707172", "https://s.magsrv.com/v1/vast.php?idzone=5707174", "https://s.magsrv.com/v1/vast.php?idzone=5707176", "https://s.magsrv.com/v1/vast.php?idzone=5707178", "https://s.magsrv.com/v1/vast.php?idzone=5707180", "https://s.magsrv.com/v1/vast.php?idzone=5707182", "https://s.magsrv.com/v1/vast.php?idzone=5707184", "https://s.magsrv.com/v1/vast.php?idzone=5707186", "https://s.magsrv.com/v1/vast.php?idzone=5707188"];
-function goBack(){ window.location.href="index.html"; }
-
-window.onload = function(){
-    const params = new URLSearchParams(window.location.search);
-    const url = decodeURIComponent(params.get('url') || '');
-    const title = decodeURIComponent(params.get('title') || '');
-    const desc = decodeURIComponent(params.get('desc') || '');
-    if(!url) return;
-    const player = document.getElementById('main-video');
-    const titleEl = document.getElementById('video-title');
-    const descEl = document.getElementById('video-desc');
-    titleEl.textContent = title;
-    descEl.textContent = desc;
-    titleEl.title = title;
-    descEl.title = desc;
-    player.src = url;
-    player.load();
-    player.play().catch(e=>console.log('⚠️ Autoplay blocked', e));
-    let adPlayed = false;
-    player.addEventListener('timeupdate', ()=>{
-        if(!adPlayed && player.currentTime>=60){
-            adPlayed = true;
-            const adUrl = ads[Math.floor(Math.random()*ads.length)];
-            const currentTime = player.currentTime;
-            player.pause();
-            const adVideo = document.createElement('video');
-            adVideo.src = adUrl;
-            adVideo.controls = false;
-            adVideo.autoplay = true;
-            adVideo.style.width = "100%";
-            adVideo.style.borderRadius = "10px";
-            const container = document.querySelector(".player-container");
-            container.insertBefore(adVideo, player.nextSibling);
-            adVideo.addEventListener('ended', ()=>{
-                adVideo.remove();
-                player.currentTime = currentTime;
-                player.play();
-            });
-        }
-    });
+const ads=['https://s.magsrv.com/v1/vast.php?idzone=5707142', 'https://s.magsrv.com/v1/vast.php?idzone=5707152', 'https://s.magsrv.com/v1/vast.php?idzone=5707156', 'https://s.magsrv.com/v1/vast.php?idzone=5707158', 'https://s.magsrv.com/v1/vast.php?idzone=5707162', 'https://s.magsrv.com/v1/vast.php?idzone=5707164', 'https://s.magsrv.com/v1/vast.php?idzone=5707166', 'https://s.magsrv.com/v1/vast.php?idzone=5707168', 'https://s.magsrv.com/v1/vast.php?idzone=5707170', 'https://s.magsrv.com/v1/vast.php?idzone=5707172', 'https://s.magsrv.com/v1/vast.php?idzone=5707174', 'https://s.magsrv.com/v1/vast.php?idzone=5707176', 'https://s.magsrv.com/v1/vast.php?idzone=5707178', 'https://s.magsrv.com/v1/vast.php?idzone=5707180', 'https://s.magsrv.com/v1/vast.php?idzone=5707182', 'https://s.magsrv.com/v1/vast.php?idzone=5707184', 'https://s.magsrv.com/v1/vast.php?idzone=5707186', 'https://s.magsrv.com/v1/vast.php?idzone=5707188'];
+window.onload=function(){
+const params=new URLSearchParams(window.location.search);
+const url=decodeURIComponent(params.get('url')||'');
+const title=decodeURIComponent(params.get('title')||'');
+const desc=decodeURIComponent(params.get('desc')||'');
+if(!url)return;
+const player=document.getElementById('main-video');
+document.getElementById('video-title').textContent=title;
+document.getElementById('video-title').title=title;
+document.getElementById('video-desc').textContent=desc;
+document.getElementById('video-desc').title=desc;
+player.src=url;player.muted=true;player.play().catch(e=>console.log(e));player.muted=false;
+let adPlayed=false;
+const adCheck=setInterval(()=>{
+if(!adPlayed&&player.currentTime>=60){
+adPlayed=true;clearInterval(adCheck);
+const adUrl=ads[Math.floor(Math.random()*ads.length)];
+const currentTime=player.currentTime;player.pause();
+const adVideo=document.createElement('video');
+adVideo.src=adUrl;adVideo.controls=false;adVideo.autoplay=true;adVideo.style.width="100%";adVideo.style.borderRadius="10px";
+document.querySelector(".player-container").insertBefore(adVideo,player.nextSibling);
+adVideo.addEventListener('ended',()=>{adVideo.remove();player.currentTime=currentTime;player.play();});
+adVideo.addEventListener('error',()=>{adVideo.remove();player.currentTime=currentTime;player.play();});
+}
+},500);
 };
 </script>
 </body>
