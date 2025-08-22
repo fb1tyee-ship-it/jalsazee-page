@@ -3,31 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Player with VAST & Outstream Ads</title>
+<title>Video Player with Fixed Outstream & VAST Ads</title>
 <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;display:flex;flex-direction:column;align-items:center}
-header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:20px;width:100%;position:sticky;top:0}
-.player-container{max-width:600px;width:100%;padding:10px}
+header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:20px;width:100%;position:sticky;top:0;z-index:999}
+.player-container{max-width:600px;width:100%;padding:10px;display:flex;flex-direction:column;align-items:center;margin-top:120px}
 video{width:100%;border-radius:10px}
 #video-title{font-size:14px; margin:5px 0;}
 #video-desc{font-size:12px; color:#555;}
-#adContainer{width:100%;height:300px;position:relative;background:black;display:flex;align-items:center;justify-content:center;color:white;font-size:16px}
-.ad-outstream{width:100%;text-align:center;margin:10px 0}
+.fixed-outstream-ad{position:fixed;top:60px;left:50%;transform:translateX(-50%);width:100%;max-width:600px;height:auto;text-align:center;z-index:1000;background:#fff;padding:5px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}
+#adContainer{width:100%;height:300px;position:relative;background:black;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;margin-top:10px}
 </style>
 </head>
 <body>
 <header>Shajazada Bhai Videos</header>
 
-<!-- Outstream Banner Ad -->
-<div class="ad-outstream">
+<!-- Fixed Outstream Banner above video -->
+<div class="fixed-outstream-ad">
 <script async type="application/javascript" src="https://a.magsrv.com/ad-provider.js"></script>
 <ins class="eas6a97888e37" data-zoneid="5707436"></ins>
 <script>(AdProvider = window.AdProvider || []).push({"serve": {}});</script>
 </div>
 
 <div class="player-container">
-  <div id="adContainer">Loading Ad...</div>
+  <div id="adContainer">Loading VAST Ad...</div>
   <video id="contentElement" controls preload="none" style="display:none"></video>
   <h3 id="video-title"></h3>
   <p id="video-desc"></p>
@@ -48,7 +48,7 @@ videoContent.src = url;
 // --- VAST Ads List ---
 const vastAds = ["https://s.magsrv.com/v1/vast.php?idzone=5707142", "https://s.magsrv.com/v1/vast.php?idzone=5707152", "https://s.magsrv.com/v1/vast.php?idzone=5707156", "https://s.magsrv.com/v1/vast.php?idzone=5707158", "https://s.magsrv.com/v1/vast.php?idzone=5707162", "https://s.magsrv.com/v1/vast.php?idzone=5707164", "https://s.magsrv.com/v1/vast.php?idzone=5707166", "https://s.magsrv.com/v1/vast.php?idzone=5707168", "https://s.magsrv.com/v1/vast.php?idzone=5707170", "https://s.magsrv.com/v1/vast.php?idzone=5707172", "https://s.magsrv.com/v1/vast.php?idzone=5707174", "https://s.magsrv.com/v1/vast.php?idzone=5707176", "https://s.magsrv.com/v1/vast.php?idzone=5707178", "https://s.magsrv.com/v1/vast.php?idzone=5707180", "https://s.magsrv.com/v1/vast.php?idzone=5707182", "https://s.magsrv.com/v1/vast.php?idzone=5707184", "https://s.magsrv.com/v1/vast.php?idzone=5707186", "https://s.magsrv.com/v1/vast.php?idzone=5707188"];
 
-// প্রতিবার একেবারে unique random ad link
+// Unique random VAST ad per play
 function getUniqueAd() {
    const base = vastAds[Math.floor(Math.random() * vastAds.length)];
    const unique = "&r=" + Math.random().toString(36).substring(2) + Date.now();
