@@ -30,7 +30,6 @@ header button:hover{background:#ffe5e5}
       width="600"
       height="340"
       data-setup='{}'>
-      <source id="main-video" src="" type="video/mp4" />
   </video>
   <h3 id="video-title" title=""></h3>
   <p id="video-desc" title=""></p>
@@ -63,35 +62,30 @@ window.onload = function(){
     let mainVideoSrc = videoUrl;
     let mainVideoTime = 0;
 
-    // Load main video
-    player.src({ type: "video/mp4", src: mainVideoSrc });
-    player.play().catch(err => console.log("⚠️ Autoplay blocked", err));
+    player.ready(() => {
+        player.src({ type: "video/mp4", src: mainVideoSrc });
+        player.play().catch(err => console.log("⚠️ Autoplay blocked", err));
 
-    // After 1 min play VAST ad
-    setTimeout(() => {
-        mainVideoTime = player.currentTime();
-        player.pause();
+        setTimeout(() => {
+            mainVideoTime = player.currentTime();
+            player.pause();
 
-        const randomAd = vastAds[Math.floor(Math.random() * vastAds.length)];
+            const randomAd = vastAds[Math.floor(Math.random() * vastAds.length)];
 
-        player.ima({
-            adTagUrl: randomAd,
-            debug: false
-        });
+            player.ima({ adTagUrl: randomAd, debug: false });
+            player.ima.requestAds();
 
-        player.ima.requestAds();
+            player.one('adsready', () => {
+                player.ima.playAd();
+            });
 
-        player.one('adsready', () => {
-            player.ima.playAd();
-        });
-
-        player.one('adend', () => {
-            // Resume main video
-            player.src({ type: "video/mp4", src: mainVideoSrc });
-            player.currentTime(mainVideoTime);
-            player.play();
-        });
-    }, 60000); // 60s delay
+            player.one('adend', () => {
+                player.src({ type: "video/mp4", src: mainVideoSrc });
+                player.currentTime(mainVideoTime);
+                player.play();
+            });
+        }, 60000); // 60s
+    });
 };
 </script>
 </body>
