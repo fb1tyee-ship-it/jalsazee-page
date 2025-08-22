@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Player</title>
+<title>Video Player with Ads</title>
+<link href="https://vjs.zencdn.net/7.24.0/video-js.css" rel="stylesheet" />
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;display:flex;flex-direction:column;align-items:center}
 header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:20px;width:100%;position:sticky;top:0;display:flex;align-items:center;justify-content:center}
 header button{position:absolute;left:10px;background:white;color:#ff0000;border:none;padding:6px 12px;font-size:14px;border-radius:6px;cursor:pointer;font-weight:bold}
 header button:hover{background:#ffe5e5}
 .player-container{display:flex;flex-direction:column;max-width:600px;width:100%;padding:10px}
-video{width:100%;border-radius:10px}
 #video-title{font-size:14px; margin:5px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 #video-desc{font-size:12px; color:#555; margin:2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 </style>
@@ -21,10 +21,24 @@ video{width:100%;border-radius:10px}
   <span>Shajazada Bhai Videos</span>
 </header>
 <div class="player-container">
-  <video id="video-player" controls></video>
+  <video
+      id="video-player"
+      class="video-js vjs-default-skin"
+      controls
+      preload="auto"
+      width="600"
+      height="340"
+      data-setup='{}'>
+      <source id="main-video" src="" type="video/mp4" />
+  </video>
   <h3 id="video-title" title=""></h3>
   <p id="video-desc" title=""></p>
 </div>
+
+<script src="https://vjs.zencdn.net/7.24.0/video.min.js"></script>
+<script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/videojs-contrib-ads@6.9.0/dist/videojs-contrib-ads.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/videojs-ima@1.9.0/dist/videojs.ima.min.js"></script>
 
 <script>
 function goBack(){ window.location.href = "index.html"; }
@@ -36,7 +50,8 @@ window.onload = function(){
     const desc = decodeURIComponent(params.get('desc') || '');
     const vastAds = ['https://s.magsrv.com/v1/vast.php?idzone=5707142', 'https://s.magsrv.com/v1/vast.php?idzone=5707152', 'https://s.magsrv.com/v1/vast.php?idzone=5707156', 'https://s.magsrv.com/v1/vast.php?idzone=5707158', 'https://s.magsrv.com/v1/vast.php?idzone=5707162', 'https://s.magsrv.com/v1/vast.php?idzone=5707164', 'https://s.magsrv.com/v1/vast.php?idzone=5707166', 'https://s.magsrv.com/v1/vast.php?idzone=5707168', 'https://s.magsrv.com/v1/vast.php?idzone=5707170', 'https://s.magsrv.com/v1/vast.php?idzone=5707172', 'https://s.magsrv.com/v1/vast.php?idzone=5707174', 'https://s.magsrv.com/v1/vast.php?idzone=5707176', 'https://s.magsrv.com/v1/vast.php?idzone=5707178', 'https://s.magsrv.com/v1/vast.php?idzone=5707180', 'https://s.magsrv.com/v1/vast.php?idzone=5707182', 'https://s.magsrv.com/v1/vast.php?idzone=5707184', 'https://s.magsrv.com/v1/vast.php?idzone=5707186', 'https://s.magsrv.com/v1/vast.php?idzone=5707188'];
 
-    const player = document.getElementById('video-player');
+    const videoElement = document.getElementById('video-player');
+    const player = videojs(videoElement);
     const videoTitle = document.getElementById('video-title');
     const videoDesc = document.getElementById('video-desc');
 
@@ -48,28 +63,34 @@ window.onload = function(){
     let mainVideoSrc = videoUrl;
     let mainVideoTime = 0;
 
-    // play original video
-    player.src = mainVideoSrc;
+    player.src({ type: "video/mp4", src: mainVideoSrc });
     player.play().catch(err => console.log("⚠️ Autoplay blocked", err));
 
     // 1 minute delay for ad
     setTimeout(() => {
-        mainVideoTime = player.currentTime;
+        mainVideoTime = player.currentTime();
         player.pause();
 
-        // pick random ad
         const randomAd = vastAds[Math.floor(Math.random() * vastAds.length)];
-        player.src = randomAd;
-        player.currentTime = 0;
-        player.play();
 
-        // when ad ends, resume original video
-        player.onended = () => {
-            player.src = mainVideoSrc;
-            player.currentTime = mainVideoTime;
+        player.ima({
+            adTagUrl: randomAd,
+            debug: false
+        });
+
+        player.ima.requestAds();
+
+        player.one('adsready', () => {
+            player.ima.playAd();
+        });
+
+        player.one('adend', () => {
+            // resume main video
+            player.src({ type: "video/mp4", src: mainVideoSrc });
+            player.currentTime(mainVideoTime);
             player.play();
-        };
-    }, 60000); // 60,000 ms = 1 minute
+        });
+    }, 60000);
 };
 </script>
 </body>
