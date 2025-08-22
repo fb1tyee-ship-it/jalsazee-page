@@ -3,16 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Player with VAST & Sticky Banner</title>
+<title>Video Player with VAST & Outstream Ads</title>
 <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;padding-top:138px;} /* header + sticky banner */
+body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;display:flex;flex-direction:column;align-items:center}
 header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:20px;width:100%;position:sticky;top:0;z-index:999}
-.sticky-banner{width:100%;height:90px;position:sticky;top:48px;left:0;z-index:998;text-align:center;background:#fff;}
+.sticky-banner{width:100%;height:45px;position:sticky;top:48px; z-index:998; text-align:center; background:#fff; overflow:hidden;}
 .sticky-banner ins{display:inline-block;width:100%;height:100%;}
 .player-container{max-width:600px;width:100%;padding:10px}
 video{width:100%;border-radius:10px}
 #adContainer{width:100%;height:300px;position:relative;background:black;display:flex;align-items:center;justify-content:center;color:white;font-size:16px}
+.ad-outstream{width:100%;text-align:center;margin:10px 0;height:45px; overflow:hidden;} /* 50% smaller */
+.ad-outstream ins{display:inline-block;width:100%;height:100%;}
 #video-title{font-size:14px; margin:5px 0;}
 #video-desc{font-size:12px; color:#555;}
 </style>
@@ -20,10 +22,17 @@ video{width:100%;border-radius:10px}
 <body>
 <header>Shajazada Bhai Videos</header>
 
-<!-- Sticky full-width Outstream banner -->
+<!-- Sticky top Outstream banner -->
 <div class="sticky-banner">
 <script async type="application/javascript" src="https://a.magsrv.com/ad-provider.js"></script>
 <ins class="eas6a97888e17" data-zoneid="5707474"></ins>
+<script>(AdProvider = window.AdProvider || []).push({"serve": {}});</script>
+</div>
+
+<!-- Outstream Banner above video player -->
+<div class="ad-outstream">
+<script async type="application/javascript" src="https://a.magsrv.com/ad-provider.js"></script>
+<ins class="eas6a97888e37" data-zoneid="5707436"></ins>
 <script>(AdProvider = window.AdProvider || []).push({"serve": {}});</script>
 </div>
 
