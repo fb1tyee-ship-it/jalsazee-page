@@ -36,6 +36,11 @@ header button:hover{background:#ffe5e5}
 video{width:100%;border-radius:10px}
 #video-title{font-size:14px; margin:5px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 #video-desc{font-size:12px; color:#555; margin:2px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.banner-ad, .large-banner-ad{width:320px;height:auto;margin:5px auto;}
+.large-banner-ad{height:250px;}
+@media(max-width:360px){
+    .banner-ad iframe, .large-banner-ad iframe{width:100% !important; height:auto !important;}
+}
 </style>
 </head>
 <body>
@@ -47,6 +52,35 @@ video{width:100%;border-radius:10px}
   <video id="video-player" controls></video>
   <h3 id="video-title" title=""></h3>
   <p id="video-desc" title=""></p>
+
+  <!-- Banner 320x50 -->
+  <div class="banner-ad">
+    <script type="text/javascript">
+        atOptions = {
+            'key' : '66a6ada3d1922f612628a29a3eec4cbe',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+        };
+    </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/66a6ada3d1922f612628a29a3eec4cbe/invoke.js"></script>
+  </div>
+
+  <!-- Banner 300x250 -->
+  <div class="large-banner-ad">
+    <script type="text/javascript">
+        atOptions = {
+            'key' : 'eb007d011b6ea536b42c2f1bfb4cb014',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+        };
+    </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/eb007d011b6ea536b42c2f1bfb4cb014/invoke.js"></script>
+  </div>
+
 </div>
 <script>
 function goBack(){
