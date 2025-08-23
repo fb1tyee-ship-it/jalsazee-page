@@ -1339,14 +1339,16 @@ function openAdThenPlay(url,title,desc){
     overlay.style.justifyContent='center';
     overlay.style.alignItems='center';
     overlay.style.zIndex='9999';
-    overlay.innerHTML=`<p>Ad is opening in browser...</p><p id="countdown">${timeLeft}</p>`;
+    overlay.innerHTML=`<p>Ad is opening in browser...</p>
+                      <p id="countdown">${timeLeft}</p>
+                      <p style="margin-top:10px;font-size:14px;">Ads চালু হওয়ার পর ৫ সেকেন্ড অপেক্ষা করতে হবে</p>`;
     document.body.appendChild(overlay);
 
     const countdownEl = document.getElementById('countdown');
     const interval = setInterval(()=>{
         if(adWindow.closed){
             clearInterval(interval);
-            alert('Ad window was closed before countdown finished. Video will not play.');
+            alert('Ad window was closed before countdown finished. ভিডিও চালু হবে না।');
             return;
         }
         timeLeft -= 1;
