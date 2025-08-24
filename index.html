@@ -18,6 +18,7 @@ header{background:#ff0000;color:white;padding:12px;text-align:center;font-size:2
 @media(max-width:360px){
     .banner-ad iframe, .large-banner-ad iframe{width:100% !important; height:auto !important;}
 }
+button.backBtn{margin-top:20px;padding:10px 20px;font-size:14px;border:none;border-radius:5px;background:#ff0000;color:white;cursor:pointer;}
 </style>
 
 <!-- Popunder Ad -->
@@ -1643,38 +1644,40 @@ function openAdThenPlay(url,title,desc){
     }
 
     let timeLeft = 5;
+
     const overlay = document.createElement('div');
     overlay.style.position='fixed';
     overlay.style.top='0';
     overlay.style.left='0';
     overlay.style.width='100%';
     overlay.style.height='100%';
-    overlay.style.background='rgba(0,0,0,0.85)';
+    overlay.style.background='rgba(0,0,0,0.8)';
     overlay.style.color='white';
     overlay.style.display='flex';
     overlay.style.flexDirection='column';
     overlay.style.justifyContent='center';
     overlay.style.alignItems='center';
     overlay.style.zIndex='9999';
-    overlay.style.fontFamily='Arial, sans-serif';
-    overlay.style.textAlign='center';
     overlay.innerHTML=`
-        <p style="font-size:18px;margin-bottom:10px;">Ads চালু হওয়ার পর ৫ সেকেন্ড অপেক্ষা করতে হবে</p>
-        <p style="font-size:24px;font-weight:bold;margin:10px 0;" id="countdown">${timeLeft}</p>
-        <button id="backHomeBtn" style="margin-top:20px;padding:10px 20px;font-size:16px;border:none;border-radius:5px;background:#ff0000;color:white;cursor:pointer;display:none;">
-            Back to Home
-        </button>
+        <p>Ad is opening in browser...</p>
+        <p id="countdown">${timeLeft}</p>
+        <p style="margin-top:10px;font-size:14px;">Ads চালু হওয়ার পর ৫ সেকেন্ড অপেক্ষা করতে হবে</p>
+        <button class="backBtn" id="backBtn">Back to Home</button>
     `;
     document.body.appendChild(overlay);
 
     const countdownEl = document.getElementById('countdown');
-    const backHomeBtn = document.getElementById('backHomeBtn');
+    const backBtn = document.getElementById('backBtn');
+
+    backBtn.onclick = () => {
+        overlay.remove();
+        window.location.href = 'index.html';
+    };
 
     const interval = setInterval(()=>{
         if(adWindow.closed){
             clearInterval(interval);
             alert('Ad window was closed before countdown finished. ভিডিও চালু হবে না।');
-            overlay.remove();
             return;
         }
         timeLeft -= 1;
@@ -1682,12 +1685,8 @@ function openAdThenPlay(url,title,desc){
         if(timeLeft <= 0){
             clearInterval(interval);
             if(!adWindow.closed) adWindow.close();
-            countdownEl.style.display='none';
-            overlay.querySelector('p').textContent='🎉 এখন ভিডিও দেখুন বা হোমে ফিরে যান';
-            backHomeBtn.style.display='inline-block';
-            backHomeBtn.onclick = ()=>{
-                window.location.href='index.html';
-            };
+            overlay.remove();
+            window.location.href=`play.html?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&desc=${encodeURIComponent(desc)}`;
         }
     },1000);
 }
